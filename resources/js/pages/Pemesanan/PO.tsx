@@ -26,9 +26,9 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 // 🔹 Dummy data cart
 const dummyCart = [
-  { id: 1, name: "Paracetamol", qty: 10, price: 5000 },
-  { id: 2, name: "Vitamin C", qty: 5, price: 7000 },
-  { id: 3, name: "Aspirin", qty: 3, price: 7000 },
+  { id: 1, name: "Aspirin", qty: 1, price: 25000 },
+  { id: 2, name: "Paracetamol", qty: 2, price: 15000 },
+  { id: 3, name: "Vitamin C", qty: 3, price: 10000 },
 ];
 
 export default function PurchaseOrderPage() {

@@ -61,7 +61,7 @@ export default function Welcome() {
                     
                         {/* Pemesanan Barang Card */}
                         <Link
-                            href="/pemesanan"
+                            href="/pemesanan/medicines"
                             className="group rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg dark:border-gray-700 dark:bg-[#1a1a1a]"
                         >
                             <div className="flex flex-col items-start gap-3">
@@ -78,7 +78,7 @@ export default function Welcome() {
                         </Link>
                         {/* Penerimaan Barang Card */}
                         <Link
-                            href="/penerimaan/create"
+                            href="/penerimaan"
                             className="group rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg dark:border-gray-700 dark:bg-[#1a1a1a]"
                         >
                             <div className="flex flex-col items-start gap-3">
