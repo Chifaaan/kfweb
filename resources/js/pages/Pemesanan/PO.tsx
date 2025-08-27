@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AppLayout from "@/layouts/app-layout";
 import { Head, Link } from "@inertiajs/react";
-import { type BreadcrumbItem } from "@/types";
+import { type BreadcrumbItem, CartItem } from "@/types";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -25,11 +25,11 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 // 🔹 Dummy data cart
-const dummyCart = [
-  { id: 1, name: "Aspirin", qty: 1, price: 25000 },
-  { id: 2, name: "Paracetamol", qty: 2, price: 15000 },
-  { id: 3, name: "Vitamin C", qty: 3, price: 10000 },
-];
+// const dummyCart = [
+//   { id: 1, name: "Aspirin", qty: 1, price: 25000 },
+//   { id: 2, name: "Paracetamol", qty: 2, price: 15000 },
+//   { id: 3, name: "Vitamin C", qty: 3, price: 10000 },
+// ];
 
 export default function PurchaseOrderPage() {
   const [discountType, setDiscountType] = useState("Bertingkat");
@@ -46,10 +46,21 @@ export default function PurchaseOrderPage() {
   const namaPengentri = "User";
   const namaKrediturOptions = ["Supplier A", "Supplier B", "Supplier C"];
 
-  // 🔹 Hitung subtotal, ppn, total
-  const subtotal = dummyCart.reduce((sum, item) => sum + item.qty * item.price, 0);
+
+    // 🔹 Load Cart dari localStorage
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  useEffect(() => {
+    const storedCart = localStorage.getItem("cart");
+    if (storedCart) {
+      setCartItems(JSON.parse(storedCart));
+    }
+  }, []);
+
+    // 🔹 Hitung subtotal, ppn, total
+  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const ppn = ppnType === "Tanpa" ? 0 : subtotal * 0.11;
   const total = subtotal + ppn;
+
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
@@ -195,14 +206,12 @@ export default function PurchaseOrderPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {dummyCart.map((item) => (
-                    <TableRow key={item.id}>
+                  {cartItems.map((item, index) => (
+                    <TableRow key={index}>
                       <TableCell>{item.name}</TableCell>
-                      <TableCell>{item.qty}</TableCell>
+                      <TableCell>{item.quantity}</TableCell>
                       <TableCell>Rp {item.price.toLocaleString()}</TableCell>
-                      <TableCell>
-                        Rp {(item.qty * item.price).toLocaleString()}
-                      </TableCell>
+                      <TableCell>Rp {(item.price * item.quantity).toLocaleString()}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
