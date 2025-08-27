@@ -2,7 +2,6 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -236,19 +235,3 @@ export default function PenerimaanBarangForm() {
         </AppLayout>
     );
 }
-
-// Komponen Baris Tabel
-function TableRow({ label, children }: { label: string; children: React.ReactNode }) {
-    return (
-        <tr className="border-b border-gray-200 hover:bg-gray-50 transition">
-            <td className="w-1/4 bg-gray-50 px-4 py-3 font-medium text-gray-700 align-top">{label}</td>
-            <td className="px-4 py-3">{children}</td>
-        </tr>
-    );
-}
-
-
-const inputStyle = `
-    w-full border border-gray-300 rounded px-3 py-2 
-    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
-`;

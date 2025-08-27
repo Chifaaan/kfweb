@@ -73,7 +73,7 @@ const dummyPenerimaanData = [
 ];
 
 // Fungsi export CSV
-function exportToCSV(data: any[], filename: string) {
+function exportToCSV<T extends object>(data: T[], filename: string) {
     if (!data.length) return;
     const csvRows = [];
 
@@ -84,7 +84,7 @@ function exportToCSV(data: any[], filename: string) {
     // Ambil data setiap row
     for (const row of data) {
         const values = headers.map(header => {
-            const val = row[header] ?? '';
+            const val = (row as Record<string, unknown>)[header] ?? "";
             return `"${String(val).replace(/"/g, '""')}"`;
         });
         csvRows.push(values.join(','));
