@@ -1,6 +1,6 @@
 import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
-import { CartItem, type BreadcrumbItem } from '@/types';
+import { CartItem, Product, type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 import Filters from "@/components/Filters";
 import ProductCard from "@/components/ProductCard";
@@ -18,7 +18,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function Index() {
-  const products = [
+  const products: Product[] = [
   { 
     name: "KF FACIAL TISSUE 200S ANIMAL", 
     price: 15000, 
@@ -97,7 +97,7 @@ export default function Index() {
   const [sortBy, setSortBy] = useState("name-asc");
   const [filters, setFilters] = useState({ categories: ["Semua Produk"], packages: ["Semua Package"] });
   const [cart, setCart] = useState<CartItem[]>([]);
-  const [selectedProduct, setSelectedProduct] = useState<any | null>(null); // 🔹 modal state
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null); // 🔹 modal state
 
   // 🔹 Hitung total item dalam cart
   const totalItems = cart.length; // jumlah jenis produk unik
@@ -238,7 +238,7 @@ export default function Index() {
 
 {/* 🔹 Modal Detail Produk */}
 <Dialog open={!!selectedProduct} onOpenChange={() => setSelectedProduct(null)}>
-  <DialogContent className="max-w-lg">
+  <DialogContent className="w-[95%] sm:max-w-lg md:max-w-2xl max-h-[90vh] overflow-y-auto">
     {selectedProduct && (
       <>
         <DialogHeader>
@@ -252,7 +252,7 @@ export default function Index() {
           <img
             src={selectedProduct.image}
             alt={selectedProduct.name}
-            className="w-full sm:w-1/3 rounded-lg border"
+            className="w-full sm:w-1/3 rounded-lg border object-cover"
           />
           <div className="flex-1 space-y-2">
             <p><strong>Harga:</strong> Rp{selectedProduct.price.toLocaleString()}</p>
@@ -284,15 +284,20 @@ export default function Index() {
 
           <TabsContent value="dosage" className="mt-2 text-sm text-gray-700">
             <div className="space-y-1">
-          {selectedProduct.dosage.split('. ').map((line: string, idx: number) => {
-            const formatted = line
-              .replace(/Dewasa:/g, '<strong>Dewasa:</strong>')
-              .replace(/Anak-anak:/g, '<strong>Anak-anak:</strong>');
-            return (
-              <p key={idx} dangerouslySetInnerHTML={{ __html: formatted + (line.endsWith('.') ? '' : '.') }} />
-            );
-          })}
-        </div>
+              {selectedProduct.dosage.split('. ').map((line: string, idx: number) => {
+                const formatted = line
+                  .replace(/Dewasa:/g, '<strong>Dewasa:</strong>')
+                  .replace(/Anak-anak:/g, '<strong>Anak-anak:</strong>');
+                return (
+                  <p
+                    key={idx}
+                    dangerouslySetInnerHTML={{
+                      __html: formatted + (line.endsWith('.') ? '' : '.'),
+                    }}
+                  />
+                );
+              })}
+            </div>
           </TabsContent>
         </Tabs>
       </>

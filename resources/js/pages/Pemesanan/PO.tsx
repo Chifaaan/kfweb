@@ -264,19 +264,25 @@ export default function PurchaseOrderPage() {
 
       {/* Cancel Confirmation Dialog */}
       <Dialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
-        <DialogContent>
+        <DialogContent className="w-[95%] sm:max-w-lg max-h-[90vh] overflow-y-auto rounded-xl">
           <DialogHeader>
             <DialogTitle>Batalkan Purchase Order?</DialogTitle>
             <DialogDescription>
               Apakah Anda yakin ingin membatalkan? Perubahan tidak akan disimpan.
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter className="flex justify-end gap-2">
-            <Button variant="outline" onClick={() => setShowCancelDialog(false)}>
+          <DialogFooter className="flex flex-col sm:flex-row justify-end gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setShowCancelDialog(false)}
+              className="w-full sm:w-auto"
+            >
               Tidak
             </Button>
-            <Link href="/pemesanan/cart">
-              <Button variant="destructive">Ya, Batalkan</Button>
+            <Link href="/pemesanan/cart" className="w-full sm:w-auto">
+              <Button variant="destructive" className="w-full sm:w-auto">
+                Ya, Batalkan
+              </Button>
             </Link>
           </DialogFooter>
         </DialogContent>
@@ -284,19 +290,23 @@ export default function PurchaseOrderPage() {
 
       {/* Save Confirmation Dialog */}
       <Dialog open={showSaveDialog} onOpenChange={setShowSaveDialog}>
-        <DialogContent>
+        <DialogContent className="w-[95%] sm:max-w-lg max-h-[90vh] overflow-y-auto rounded-xl">
           <DialogHeader>
             <DialogTitle>Simpan Purchase Order?</DialogTitle>
             <DialogDescription>
               Apakah Anda yakin ingin menyimpan Purchase Order ini?
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter className="flex justify-end gap-2">
-            <Button variant="outline" onClick={() => setShowSaveDialog(false)}>
+          <DialogFooter className="flex flex-col sm:flex-row justify-end gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setShowSaveDialog(false)}
+              className="w-full sm:w-auto"
+            >
               Batal
             </Button>
-            <Link href="/pemesanan/history">
-              <Button>Ya, Simpan</Button>
+            <Link href="/pemesanan/history" className="w-full sm:w-auto">
+              <Button className="w-full sm:w-auto">Ya, Simpan</Button>
             </Link>
           </DialogFooter>
         </DialogContent>

@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import AppLayout from "@/layouts/app-layout";
-import { type BreadcrumbItem } from "@/types";
+import { Order, type BreadcrumbItem } from "@/types";
 
 const breadcrumbs: BreadcrumbItem[] = [
   { title: "History Pemesanan", href: "pemesanan/history" },
@@ -14,7 +14,7 @@ export default function CooperativeHistory() {
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [search, setSearch] = useState("");
 
-  const orders = [
+  const orders: Order[] = [
     { id: "TO 001", buyer: "Agus Praya", date: "18-07-2025", qty: 80, price: 2000000, status: "Accepted" },
     { id: "TO 002", buyer: "Asep Bhag", date: "18-06-2025", qty: 56, price: 918000, status: "On Deliver" },
     { id: "TO 003", buyer: "Siti Amalia", date: "18-08-2025", qty: 12, price: 199800, status: "Pending" },
@@ -93,8 +93,8 @@ export default function CooperativeHistory() {
                 </div>
               </div>
 
-              {/* Table */}
-              <div className="overflow-x-auto">
+              {/* Table (Desktop) */}
+              <div className="hidden md:block overflow-x-auto">
                 <table className="min-w-full text-sm border-collapse">
                   <thead className="bg-gray-100 text-left">
                     <tr>
@@ -131,6 +131,34 @@ export default function CooperativeHistory() {
                     ))}
                   </tbody>
                 </table>
+              </div>
+
+              {/* Card List (Mobile) */}
+              <div className="grid grid-cols-1 gap-3 md:hidden">
+                {filteredOrders.map((o, idx) => (
+                  <div key={idx} className="border rounded-lg p-3 shadow-sm bg-white">
+                    <div className="flex justify-between items-center">
+                      <span className="font-semibold">{o.id}</span>
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                          o.status === "Accepted"
+                            ? "bg-green-100 text-green-700"
+                            : o.status === "On Deliver"
+                            ? "bg-blue-100 text-blue-700"
+                            : "bg-yellow-100 text-yellow-700"
+                        }`}
+                      >
+                        {o.status}
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-700 mt-1">👤 {o.buyer}</p>
+                    <p className="text-sm text-gray-700">📅 {o.date}</p>
+                    <p className="text-sm text-gray-700">📦 {o.qty} items</p>
+                    <p className="text-sm font-bold text-gray-900">
+                      💰 Rp {o.price.toLocaleString("id-ID")},00
+                    </p>
+                  </div>
+                ))}
               </div>
             </CardContent>
           </Card>
