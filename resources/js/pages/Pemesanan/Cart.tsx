@@ -3,6 +3,7 @@ import { Head, Link } from "@inertiajs/react";
 import { useState, useEffect } from "react";
 import { type BreadcrumbItem, CartItem } from '@/types';
 import { ShoppingBag } from "lucide-react";
+import TextLink from "@/components/text-link";
 
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -44,6 +45,11 @@ export default function Cart() {
     localStorage.setItem("cart", JSON.stringify(updated));
   };
 
+  const clearCart = () => {
+  setCart([]);
+  localStorage.removeItem("cart");
+};
+
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const ppn = subtotal * 0.11;
   const grandTotal = subtotal + ppn;
@@ -52,7 +58,17 @@ export default function Cart() {
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="Cart" />
       <div className="p-6">
-        <h1 className="text-2xl font-bold mb-4 text-blue-800">🛒 Shopping Cart</h1>
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="text-2xl font-bold text-blue-800">🛒 Shopping Cart</h1>
+          {cart.length > 0 && (
+            <button
+              onClick={clearCart}
+              className="px-4 py-2  text-red-600 hover:text-red-800 "
+            >
+              Clear All
+            </button>
+          )}
+        </div>
 
         {cart.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-84 text-gray-500">

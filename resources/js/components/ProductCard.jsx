@@ -59,7 +59,8 @@ export default function ProductCard({ product, addToCart }) {
             dan memberikan tampilan yang lebih rapi. */}
         <button
           disabled={stock <= 0}
-          onClick={() => addToCart(product)}
+          onClick={(e) => {
+            e.stopPropagation(); addToCart(product)}}
           className={`w-full flex items-center justify-center gap-2 mt-2 px-3 py-2 rounded text-white font-semibold transition-colors ${
             stock > 0
               ? "bg-blue-600 hover:bg-blue-700"
