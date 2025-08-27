@@ -55,7 +55,7 @@ export default function PurchaseOrderPage() {
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="Purchase Order" />
 
-      <div className="p-6 space-y-6">
+      <div className="p-4 md:p-6 space-y-6">
         <h1 className="text-2xl font-bold text-blue-800">Purchase Order Form</h1>
 
         {/* Purchase Order Information */}
@@ -63,7 +63,7 @@ export default function PurchaseOrderPage() {
           <CardHeader>
             <CardTitle>Purchase Order Information</CardTitle>
           </CardHeader>
-          <CardContent className="grid grid-cols-2 gap-4">
+          <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label>Nomor Surat</Label>
               <Input value={nomorSurat} disabled className="bg-gray-100" />
@@ -104,7 +104,7 @@ export default function PurchaseOrderPage() {
             <CardTitle>Tax and Discount</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <Label>Discount Type</Label>
                 <RadioGroup
@@ -184,42 +184,44 @@ export default function PurchaseOrderPage() {
             <CardTitle>Ordered Items</CardTitle>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Item</TableHead>
-                  <TableHead>Qty</TableHead>
-                  <TableHead>Price</TableHead>
-                  <TableHead>Subtotal</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {dummyCart.map((item) => (
-                  <TableRow key={item.id}>
-                    <TableCell>{item.name}</TableCell>
-                    <TableCell>{item.qty}</TableCell>
-                    <TableCell>Rp {item.price.toLocaleString()}</TableCell>
-                    <TableCell>
-                      Rp {(item.qty * item.price).toLocaleString()}
-                    </TableCell>
+            <div className="overflow-x-auto">
+              <Table className="min-w-[400px]">
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Item</TableHead>
+                    <TableHead>Qty</TableHead>
+                    <TableHead>Price</TableHead>
+                    <TableHead>Subtotal</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {dummyCart.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell>{item.name}</TableCell>
+                      <TableCell>{item.qty}</TableCell>
+                      <TableCell>Rp {item.price.toLocaleString()}</TableCell>
+                      <TableCell>
+                        Rp {(item.qty * item.price).toLocaleString()}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
 
             {/* 🔹 Summary (Subtotal, PPN, Total) */}
-            <div className="flex flex-col items-end mt-6 space-y-2">
-              <div className="flex justify-between w-64 text-gray-700">
+            <div className="flex flex-col items-end mt-6 space-y-2 w-full md:w-64">
+              <div className="flex justify-between w-full text-gray-700">
                 <span>Subtotal</span>
                 <span>Rp {subtotal.toLocaleString()}</span>
               </div>
               {ppnType !== "Tanpa" && (
-                <div className="flex justify-between w-64 text-gray-700">
+                <div className="flex justify-between w-full text-gray-700">
                   <span>PPN (11%)</span>
                   <span>Rp {ppn.toLocaleString()}</span>
                 </div>
               )}
-              <div className="flex justify-between w-64 border-t pt-2 mt-2 text-xl font-bold text-blue-800">
+              <div className="flex justify-between w-full border-t pt-2 mt-2 text-xl font-bold text-blue-800">
                 <span>Total</span>
                 <span>Rp {total.toLocaleString()}</span>
               </div>
@@ -228,7 +230,7 @@ export default function PurchaseOrderPage() {
         </Card>
 
         {/* Action Buttons */}
-        <div className="flex justify-end gap-3">
+        <div className="flex flex-col md:flex-row justify-end gap-3">
           <Button variant="outline" onClick={() => setShowCancelDialog(true)}>
             Cancel
           </Button>

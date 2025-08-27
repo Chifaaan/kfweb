@@ -7,6 +7,7 @@ import ProductCard from "@/components/ProductCard";
 import { useState, useEffect } from "react";
 import { ShoppingCart } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -17,16 +18,19 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function Index() {
   const products = [
-    { name: "Paracetamol", price: 15000, stock: 21, qty:"250ml", category: "Obat", packaging:"Syrup", image: "https://placehold.co/400" },
-    { name: "Vitamin C", price: 10000, stock: 200, qty:"10pcs", category: "Vitamin", packaging:"Kapsul", image: "https://placehold.co/400" },
-    { name: "Amoxilin", price: 15000, stock: 0, qty:"250ml", category: "Antibiotik", packaging:"Syrup", image: "https://placehold.co/400" },
-    { name: "Aspirin", price: 25000, stock: 25, qty:"15pcs", category: "Obat", packaging:"Tablet", image: "https://placehold.co/400" },
+    { name: "KF FACIAL TISSUE 200S ANIMAL", price: 15000, stock: 20, qty:"10pcs", category: "Barang", packaging:"Barang", image: "https://placehold.co/400", description: "Tisu wajah isi besar, lembut dan aman untuk kulit wajah sehari-hari.." },
+    { name: "FITUNO TAB SALUT (BLISTER 3X10 TAB)-BJN", price: 10000, stock: 20, qty:"10pcs", category: "Obat", packaging:"Tablet", image: "https://placehold.co/400", description: "Suplemen herbal untuk bantu tingkatkan daya tahan tubuh dan pemulihan stamina." },
+    { name: "", price: 15000, stock: 0, qty:"250ml", category: "Antibiotik", packaging:"Syrup", image: "https://placehold.co/400", description: "" },
+    { name: "ENKASARI HERBAL 120ML", price: 25000, stock: 20, qty:"15pcs", category: "Obat", packaging:"Tablet", image: "https://placehold.co/400", description: "Cairan kumur herbal alami untuk menjaga kesehatan mulut dan tenggorokan. Formulanya membantu mengatasi bau mulut, sariawan, dan meredakan radang tenggorokan. Dengan bahan-bahan pilihan, memberikan sensasi segar dan nyaman setelah digunakan. Ideal untuk kebersihan mulut sehari-hari." },
+    { name: "MAGASIDA TABLET (DUS 10 TAB)-BJN", price: 20000, stock: 20, qty:"15pcs", category: "Obat", packaging:"Tablet", image: "https://placehold.co/400", description: "Obat yang digunakan untuk mengatasi gangguan pada saluran pencernaan seperti gastritis, perut kembung, maag, dispepsia, hiatus hernia, tukak lambung dan tukak usus duabelas jari" },
+    { name: "BATUGIN ELIXIR BT 120 ML - BJN", price: 65000, stock: 20, qty:"15pcs", category: "Obat", packaging:"Syrup", image: "https://placehold.co/400", description: "Obat herbal pereda batu ginjal, sirup 120ml dari BJN" },
   ];
 
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("name-asc");
   const [filters, setFilters] = useState({ categories: ["Semua Produk"], packages: ["Semua Package"] });
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [selectedProduct, setSelectedProduct] = useState<any | null>(null); // 🔹 modal state
 
   // 🔹 Hitung total item dalam cart
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -59,31 +63,28 @@ export default function Index() {
       return newCart;
     });
   };
-  
 
-// 🔹 filter berdasarkan search
-let filteredProducts = products.filter((p) =>
-  p.name.toLowerCase().includes(search.toLowerCase())
-);
+  // 🔹 filter berdasarkan search
+  let filteredProducts = products.filter((p) =>
+    p.name.toLowerCase().includes(search.toLowerCase())
+  );
 
-// ambil filter aktif (tanpa "Semua")
-const activeCategories = filters.categories.filter((c) => c !== "Semua Produk");
-const activePackages = filters.packages.filter((p) => p !== "Semua Package");
+  // ambil filter aktif (tanpa "Semua")
+  const activeCategories = filters.categories.filter((c) => c !== "Semua Produk");
+  const activePackages = filters.packages.filter((p) => p !== "Semua Package");
 
-// 🔹 jika tidak ada filter → tampil semua
-if (activeCategories.length === 0 && activePackages.length === 0) {
-  // tidak diapa-apain, semua produk lolos
-} else {
-  filteredProducts = filteredProducts.filter((p) => {
-    const matchCategory =
-      activeCategories.length === 0 || activeCategories.includes(p.category);
+  // 🔹 filter kategori & package
+  if (!(activeCategories.length === 0 && activePackages.length === 0)) {
+    filteredProducts = filteredProducts.filter((p) => {
+      const matchCategory =
+        activeCategories.length === 0 || activeCategories.includes(p.category);
 
-    const matchPackage =
-      activePackages.length === 0 || activePackages.includes(p.packaging);
+      const matchPackage =
+        activePackages.length === 0 || activePackages.includes(p.packaging);
 
-    return matchCategory && matchPackage; // AND hanya kalau dua-duanya ada
-  });
-}
+      return matchCategory && matchPackage;
+    });
+  }
 
   // 🔹 sorting
   if (sortBy === "lowest") {
@@ -95,8 +96,6 @@ if (activeCategories.length === 0 && activePackages.length === 0) {
   } else if (sortBy === "name-desc") {
     filteredProducts = [...filteredProducts].sort((a, b) => b.name.localeCompare(a.name));
   }
-
-
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
@@ -136,7 +135,9 @@ if (activeCategories.length === 0 && activePackages.length === 0) {
           {/* Produk */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {filteredProducts.map((p, i) => (
-              <ProductCard key={i} product={p} addToCart={addToCart} />
+              <div key={i} onClick={() => setSelectedProduct(p)} className="cursor-pointer">
+                <ProductCard product={p} addToCart={addToCart} />
+              </div>
             ))}
           </div>
         </div>
@@ -149,7 +150,6 @@ if (activeCategories.length === 0 && activePackages.length === 0) {
             <ShoppingCart size={24} className="sm:size-8" />
           </button>
 
-          {/* 🔹 Badge jumlah item */}
           {totalItems > 0 && (
             <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center">
               {totalItems}
@@ -157,6 +157,47 @@ if (activeCategories.length === 0 && activePackages.length === 0) {
           )}
         </a>
       </div>
+
+      {/* 🔹 Modal Detail Produk */}
+      <Dialog open={!!selectedProduct} onOpenChange={() => setSelectedProduct(null)}>
+        <DialogContent className="max-w-lg">
+          {selectedProduct && (
+            <>
+              <DialogHeader>
+                <DialogTitle>{selectedProduct.name}</DialogTitle>
+                <DialogDescription>
+                  {selectedProduct.description}
+                </DialogDescription>
+              </DialogHeader>
+
+              <div className="flex flex-col sm:flex-row gap-4">
+                <img
+                  src={selectedProduct.image}
+                  alt={selectedProduct.name}
+                  className="w-full sm:w-1/3 rounded-lg border"
+                />
+                <div className="flex-1 space-y-2">
+                  <p><strong>Harga:</strong> Rp{selectedProduct.price.toLocaleString()}</p>
+                  <p><strong>Stok:</strong> {selectedProduct.stock > 0 ? selectedProduct.stock : "Habis"}</p>
+                  <p><strong>Kategori:</strong> {selectedProduct.category}</p>
+                  <p><strong>Kemasan:</strong> {selectedProduct.packaging}</p>
+                  <p><strong>Kuantitas:</strong> {selectedProduct.qty}</p>
+
+                  {/* <button
+                    onClick={() => {
+                      addToCart(selectedProduct);
+                      setSelectedProduct(null);
+                    }}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  >
+                    Tambah ke Keranjang
+                  </button> */}
+                </div>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </AppLayout>
   );
 }

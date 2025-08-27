@@ -7,4 +7,8 @@
   alt="Logo"
 />
         );
+<<<<<<< HEAD
     }
+=======
+    }
+>>>>>>> origin/main

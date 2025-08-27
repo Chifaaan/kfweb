@@ -35,12 +35,12 @@ export default function CooperativeHistory() {
         <div className="grid gap-6">
           {/* Cooperative Info */}
           <Card className="rounded-2xl shadow-md">
-            <CardContent className="grid md:grid-cols-2 gap-4 p-6">
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 md:p-6">
               <div>
                 <h2 className="text-xl font-bold text-gray-800 mb-2">Cooperative Information</h2>
                 <p className="text-sm text-gray-500">Your Cooperative Information</p>
               </div>
-              <div className="grid grid-cols-2 gap-y-2 text-sm">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-2 text-sm">
                 <span className="font-semibold">ID Koperasi</span> <span>KOP 001</span>
                 <span className="font-semibold">Nama Koperasi</span> <span>Koperasi Desa Purwokerto</span>
                 <span className="font-semibold">Penanggungjawab</span> <span>Agus Setiawan</span>
@@ -64,7 +64,7 @@ export default function CooperativeHistory() {
                   </p>
                 </div>
 
-                <div className="flex flex-col sm:flex-row items-center gap-2">
+                <div className="flex flex-col sm:flex-row items-center gap-2 w-full md:w-auto">
                   {/* Search */}
                   <div className="relative w-full sm:w-auto">
                     <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-400" />

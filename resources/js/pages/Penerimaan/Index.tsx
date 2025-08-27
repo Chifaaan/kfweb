@@ -24,6 +24,7 @@ export default function PenerimaanBarangForm() {
         ppnType: 'Exclude',
         ppnValue: '11%',
     });
+    const [showConfirm, setShowConfirm] = useState(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -31,20 +32,24 @@ export default function PenerimaanBarangForm() {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        console.log(form);
-        // Kirim data ke backend atau API di sini
+        setShowConfirm(true); // Tampilkan popup konfirmasi
+    };
+
+    const handleConfirmYes = () => {
+        setShowConfirm(false);
+        window.location.href = '/penerimaan/history'; // Redirect ke history
+    };
+
+    const handleConfirmCancel = () => {
+        setShowConfirm(false);
     };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Form Penerimaan" />
-
             <div className="min-h-screen w-full px-2 md:px-16 py-10 bg-white">
-             <h1 className="text-2xl font-semibold text-gray-800 mb-6">Form Penerimaan Barang</h1>
-                <form
-                    onSubmit={handleSubmit}
-                    className="space-y-10"
-                >
+                <h1 className="text-2xl font-semibold text-gray-800 mb-6">Form Penerimaan Barang</h1>
+                <form onSubmit={handleSubmit} className="space-y-10">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         {/* Nomor Surat Pemesanan */}
                         <div>
@@ -203,6 +208,30 @@ export default function PenerimaanBarangForm() {
                         </button>
                     </div>
                 </form>
+
+                {/* Popup Konfirmasi */}
+                {showConfirm && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+                        <div className="bg-white rounded-xl shadow-lg p-8 max-w-sm w-full">
+                            <h2 className="text-lg font-bold mb-2 text-gray-800">Konfirmasi Simpan</h2>
+                            <p className="mb-6 text-gray-600">Apakah Anda yakin ingin menyimpan data penerimaan barang?</p>
+                            <div className="flex justify-end gap-3">
+                                <button
+                                    onClick={handleConfirmCancel}
+                                    className="px-6 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={handleConfirmYes}
+                                    className="px-6 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold"
+                                >
+                                    Yes
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </AppLayout>
     );
