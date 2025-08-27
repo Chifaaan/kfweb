@@ -234,6 +234,11 @@ export default function PurchaseOrderPage() {
                 <span>Total</span>
                 <span>Rp {total.toLocaleString()}</span>
               </div>
+                {paymentMethod === "Kredit" && total > kreditBalance && (
+                <span className="text-red-600 mt-1 text-sm font-semibold">
+                  KREDIT ANDA TIDAK CUKUP
+                </span>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -243,9 +248,17 @@ export default function PurchaseOrderPage() {
           <Button variant="outline" onClick={() => setShowCancelDialog(true)}>
             Cancel
           </Button>
-          <Button onClick={() => setShowSaveDialog(true)}>
-            Simpan Purchase Order
+          <Button 
+          onClick={() => setShowSaveDialog(true)}
+          disabled={paymentMethod === "Kredit" && total > kreditBalance}
+          className={
+          paymentMethod === "Kredit" && total > kreditBalance
+            ? "bg-gray-400 cursor-not-allowed"
+            : ""
+            }>
+                Simpan Purchase Order
           </Button>
+          
         </div>
       </div>
 
