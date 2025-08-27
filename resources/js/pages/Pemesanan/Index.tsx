@@ -100,7 +100,7 @@ export default function Index() {
   const [selectedProduct, setSelectedProduct] = useState<any | null>(null); // 🔹 modal state
 
   // 🔹 Hitung total item dalam cart
-  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const totalItems = cart.length; // jumlah jenis produk unik
 
   // 🔹 Load cart dari localStorage saat pertama kali render
   useEffect(() => {
