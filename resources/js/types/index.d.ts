@@ -28,55 +28,71 @@ export type NavSection = {
   isActive?: boolean;
 }
 
-export interface CartItem {
+
+export interface SharedData {
+  name: string;
+  quote: { message: string; author: string };
+  auth: Auth;
+  ziggy: Config & { location: string };
+  sidebarOpen: boolean;
+  [key: string]: unknown;
+}
+
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+  avatar?: string;
+  email_verified_at: string | null;
+  created_at: string;
+  updated_at: string;
+  [key: string]: unknown; // This allows for additional properties...
+}
+
+export interface CartItem extends Product {
   name: string;
   image: string;
   qty: string;
   packaging: string;
   price: number;
   quantity: number;
+  total: number;
 }
-
-export interface SharedData {
-    name: string;
-    quote: { message: string; author: string };
-    auth: Auth;
-    ziggy: Config & { location: string };
-    sidebarOpen: boolean;
-    [key: string]: unknown;
-}
-
-export interface User {
-    id: number;
-    name: string;
-    email: string;
-    avatar?: string;
-    email_verified_at: string | null;
-    created_at: string;
-    updated_at: string;
-    [key: string]: unknown; // This allows for additional properties...
-}
-
 export interface Product {
-  name: string;
-  price: number;
-  stock: number;
-  qty: string;
-  category: string;
-  packaging: string;
-  image: string;
-  description: string;
-  benefit: string[];
-  dosage: string;
+  nama_product: string;
+  sku: string;
+  kategori: string;        
+  harga_per_unit: number;
+  satuan: string;           
+  berat: number;            
+  dimensi: {                
+    panjang: number;
+    lebar: number;
+    tinggi: number;
+  };
+  image?: string;
+  description?: string;    
+  benefit?: string[];      
+  dosage?: string;   
+  stok?: number;      
 }
 
 export interface Order {
-  id: string;
-  buyer: string;
-  date: string;
-  qty: number;
-  price: number;
+  id_transaksi: string;
+  id_koperasi: string;
   status: string;
+  merchant_id: string;
+  merchant_name: string;
+  total_nominal: number;
+  remaining_credit: number;
+  is_for_sale: boolean;
+  account_no: string;
+  account_bank: string;
+  payment_type: string;
+  payment_method: string;
+  va_number: string;
+  timestamp: string;
+  product_detail: Product[]; // ⬅️ relasi ke Product
 }
 
 export interface Penerimaan {

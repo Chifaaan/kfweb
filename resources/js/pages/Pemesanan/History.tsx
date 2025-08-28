@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import AppLayout from "@/layouts/app-layout";
-import { Order, type BreadcrumbItem } from "@/types";
+import { Order, type BreadcrumbItem, CartItem } from "@/types";
 
 const breadcrumbs: BreadcrumbItem[] = [
   { title: "History Pemesanan", href: "pemesanan/history" },
@@ -14,16 +14,107 @@ export default function CooperativeHistory() {
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [search, setSearch] = useState("");
 
-  const orders: Order[] = [
-    { id: "TO 001", buyer: "Agus Praya", date: "18-07-2025", qty: 80, price: 2000000, status: "Accepted" },
-    { id: "TO 002", buyer: "Asep Bhag", date: "18-06-2025", qty: 56, price: 918000, status: "On Deliver" },
-    { id: "TO 003", buyer: "Siti Amalia", date: "18-08-2025", qty: 12, price: 199800, status: "Pending" },
-    { id: "TO 004", buyer: "Kirana uy", date: "18-09-2025", qty: 21, price: 555000, status: "Pending" },
-  ];
+const orders: Order[] = [
+  {
+    id_transaksi: "TRX-BUMN-20250818-001",
+    id_koperasi: "KOP-00123",
+    status: "Accepted",
+    merchant_id: "MCH-001",
+    merchant_name: "Toko Sembako Sejahtera",
+    total_nominal: 2000000,
+    remaining_credit: 10000000,
+    is_for_sale: false,
+    account_no: "1234567890",
+    account_bank: "Bank Mandiri",
+    payment_type: "cad",
+    payment_method: "Mandiri Virtual Account",
+    va_number: "880010012345678",
+    timestamp: "2025-07-18T10:00:00Z",
+    product_detail: [
+      {
+        nama_product: "Beras Premium 5kg",
+        sku: "BR-001",
+        kategori: "Sembako",
+        harga_per_unit: 200000,
+        satuan: "KARUNG",
+        berat: 5000,
+        dimensi: { panjang: 30, lebar: 20, tinggi: 15 },
+        image: "/images/beras.jpg",
+        description: "Beras kualitas premium langsung dari petani",
+      },
+      {
+        nama_product: "Minyak Goreng 1L",
+        sku: "MG-001",
+        kategori: "Sembako",
+        harga_per_unit: 15000,
+        satuan: "BOTOL",
+        berat: 1000,
+        dimensi: { panjang: 10, lebar: 8, tinggi: 25 },
+        image: "/images/minyak.jpg",
+        description: "Minyak goreng sehat rendah kolesterol",
+      },
+    ],
+  },
+  {
+    id_transaksi: "TRX-BUMN-20250618-002",
+    id_koperasi: "KOP-00456",
+    status: "On Deliver",
+    merchant_id: "MCH-002",
+    merchant_name: "Gudang Obat Sehat",
+    total_nominal: 918000,
+    remaining_credit: 8500000,
+    is_for_sale: false,
+    account_no: "9876543210",
+    account_bank: "Bank BRI",
+    payment_type: "cad",
+    payment_method: "BRI Virtual Account",
+    va_number: "880020009876543",
+    timestamp: "2025-06-18T14:30:00Z",
+    product_detail: [
+      {
+        nama_product: "Paracetamol 500mg",
+        sku: "OBT-001",
+        kategori: "Obat",
+        harga_per_unit: 16400,
+        satuan: "STRIP",
+        berat: 100,
+        dimensi: { panjang: 10, lebar: 5, tinggi: 2 },
+      },
+    ],
+  },
+  {
+    id_transaksi: "TRX-BUMN-20250818-003",
+    id_koperasi: "KOP-00789",
+    status: "Pending",
+    merchant_id: "MCH-003",
+    merchant_name: "Apotek Nusantara",
+    total_nominal: 199800,
+    remaining_credit: 1200000,
+    is_for_sale: false,
+    account_no: "5678901234",
+    account_bank: "Bank BCA",
+    payment_type: "cad",
+    payment_method: "BCA Virtual Account",
+    va_number: "880030005678901",
+    timestamp: "2025-08-18T08:15:00Z",
+    product_detail: [
+      {
+        nama_product: "Vitamin C 100mg",
+        sku: "OBT-002",
+        kategori: "Suplemen",
+        harga_per_unit: 16650,
+        satuan: "BOX",
+        berat: 50,
+        dimensi: { panjang: 8, lebar: 4, tinggi: 2 },
+      },
+    ],
+  },
+];
+
 
   // 🔹 Filtering
   let filteredOrders = orders.filter((o) =>
-    o.id.toLowerCase().includes(search.toLowerCase())
+    o.id_transaksi.toLowerCase().includes(search.toLowerCase())
   );
   if (statusFilter !== "ALL") {
     filteredOrders = filteredOrders.filter((o) => o.status === statusFilter);
@@ -109,11 +200,11 @@ export default function CooperativeHistory() {
                   <tbody>
                     {filteredOrders.map((o, idx) => (
                       <tr key={idx} className="border-b hover:bg-gray-50">
-                        <td className="px-4 py-2">{o.id}</td>
-                        <td className="px-4 py-2">{o.buyer}</td>
-                        <td className="px-4 py-2">{o.date}</td>
-                        <td className="px-4 py-2">{o.qty}</td>
-                        <td className="px-4 py-2">Rp {o.price.toLocaleString("id-ID")},00</td>
+                        <td className="px-4 py-2">{o.id_transaksi}</td>
+                        <td className="px-4 py-2">{o.merchant_name}</td>
+                        <td className="px-4 py-2">{o.timestamp}</td>
+                        <td className="px-4 py-2">{o.product_detail.reduce((acc, product) => acc + product.harga_per_unit, 0)}</td>
+                        <td className="px-4 py-2">Rp {o.total_nominal.toLocaleString("id-ID")},00</td>
                         <td className="px-4 py-2">
                           <span
                             className={`px-3 py-1 rounded-full text-xs font-semibold ${
@@ -138,7 +229,7 @@ export default function CooperativeHistory() {
                 {filteredOrders.map((o, idx) => (
                   <div key={idx} className="border rounded-lg p-3 shadow-sm bg-white">
                     <div className="flex justify-between items-center">
-                      <span className="font-semibold">{o.id}</span>
+                      <span className="font-semibold">{o.id_transaksi}</span>
                       <span
                         className={`px-2 py-1 rounded-full text-xs font-semibold ${
                           o.status === "Accepted"
@@ -151,11 +242,11 @@ export default function CooperativeHistory() {
                         {o.status}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-700 mt-1">👤 {o.buyer}</p>
-                    <p className="text-sm text-gray-700">📅 {o.date}</p>
-                    <p className="text-sm text-gray-700">📦 {o.qty} items</p>
+                    <p className="text-sm text-gray-700 mt-1">👤 {o.merchant_name}</p>
+                    <p className="text-sm text-gray-700">📅 {o.timestamp}</p>
+                    {/* <p className="text-sm text-gray-700">📦 {o.qty} items</p> */}
                     <p className="text-sm font-bold text-gray-900">
-                      💰 Rp {o.price.toLocaleString("id-ID")},00
+                      💰 Rp {o.total_nominal.toLocaleString("id-ID")},00
                     </p>
                   </div>
                 ))}

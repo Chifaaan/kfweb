@@ -1,7 +1,7 @@
 import AppLayout from "@/layouts/app-layout";
 import { Head, Link } from "@inertiajs/react";
 import { useState, useEffect } from "react";
-import { type BreadcrumbItem, CartItem } from "@/types";
+import { type BreadcrumbItem, type CartItem } from "@/types";
 import { ShoppingBag } from "lucide-react";
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -17,21 +17,25 @@ export default function Cart() {
     if (storedCart) setCart(JSON.parse(storedCart));
   }, []);
 
-  const updateQuantity = (name: string, delta: number) => {
+  const updateQuantity = (sku: string, delta: number) => {
     const updated = cart
       .map((item) =>
-        item.name === name
-          ? { ...item, quantity: item.quantity + delta }
+        item.sku === sku
+          ? {
+              ...item,
+              quantity: Math.max(0, item.quantity + delta),
+              total: (Math.max(0, item.quantity + delta)) * item.harga_per_unit,
+            }
           : item
       )
-      .filter((item) => item.quantity > 0); // otomatis hilang kalau quantity <= 0
+      .filter((item) => item.quantity > 0);
 
     setCart(updated);
     localStorage.setItem("cart", JSON.stringify(updated));
   };
 
-  const removeItem = (name: string) => {
-    const updated = cart.filter((item) => item.name !== name);
+  const removeItem = (sku: string) => {
+    const updated = cart.filter((item) => item.sku !== sku);
     setCart(updated);
     localStorage.setItem("cart", JSON.stringify(updated));
   };
@@ -41,7 +45,7 @@ export default function Cart() {
     localStorage.removeItem("cart");
   };
 
-  const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const subtotal = cart.reduce((sum, item) => sum + item.harga_per_unit * item.quantity,0);
   const ppn = subtotal * 0.11;
   const grandTotal = subtotal + ppn;
 
@@ -85,18 +89,18 @@ export default function Cart() {
                   <div className="flex items-center gap-4">
                     <img
                       src={item.image}
-                      alt={item.name}
+                      alt={item.nama_product}
                       className="w-16 h-16 rounded-md object-cover"
                     />
                     <div>
                       <h2 className="font-semibold text-base sm:text-lg">
-                        {item.name}
+                        {item.nama_product}
                       </h2>
                       <p className="text-sm text-gray-600">
-                        {item.qty} | {item.packaging}
+                        {item.berat} gram per {item.satuan} | Stok: {item.stok ?? 0}
                       </p>
                       <p className="text-blue-600 font-bold text-sm sm:text-base">
-                        Rp {item.price.toLocaleString()}
+                        Rp {item.harga_per_unit.toLocaleString()}
                       </p>
                     </div>
                   </div>
@@ -104,20 +108,21 @@ export default function Cart() {
                   {/* Quantity & Actions */}
                   <div className="flex items-center gap-2 sm:gap-3">
                     <button
-                      onClick={() => updateQuantity(item.name, -1)}
+                      onClick={() => updateQuantity(item.sku, -1)}
                       className="px-2 py-1 sm:px-3 sm:py-1 bg-gray-200 rounded-md hover:bg-gray-300"
                     >
                       -
                     </button>
                     <span className="font-semibold">{item.quantity}</span>
                     <button
-                      onClick={() => updateQuantity(item.name, 1)}
-                      className="px-2 py-1 sm:px-3 sm:py-1 bg-gray-200 rounded-md hover:bg-gray-300"
+                      onClick={() => updateQuantity(item.sku, 1)}
+                      disabled={item.quantity >= (item.stok ?? 0)}
+                      className="px-2 py-1 sm:px-3 sm:py-1 bg-gray-200 rounded-md hover:bg-gray-300 disabled:opacity-50"
                     >
                       +
                     </button>
                     <button
-                      onClick={() => removeItem(item.name)}
+                      onClick={() => removeItem(item.sku)}
                       className="ml-2 sm:ml-4 text-red-600 hover:text-red-800 text-sm sm:text-base"
                     >
                       Hapus
@@ -147,8 +152,8 @@ export default function Cart() {
 
               <div className="mt-6">
                 <Link href={route("po")} className="block">
-                  <button className="bg-green-600 text-white px-4 sm:px-6 py-2 rounded-md hover:bg-green-700 w-full">
-                    Pilih Pembayaran
+                  <button className="bg-blue-600 text-white px-4 sm:px-6 py-2 rounded-md hover:bg-blue-700 w-full">
+                    Cetak Purchase Order
                   </button>
                 </Link>
               </div>

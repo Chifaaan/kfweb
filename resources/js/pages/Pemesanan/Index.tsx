@@ -18,80 +18,93 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function Index() {
-  const products: Product[] = [
+const products: Product[] = [
   { 
-    name: "KF FACIAL TISSUE 200S ANIMAL", 
-    price: 15000, 
-    stock: 20, 
-    qty: "10pcs", 
-    category: "Barang", 
-    packaging: "Barang", 
-    image: "https://placehold.co/400", 
+    nama_product: "KF FACIAL TISSUE 200S ANIMAL", 
+    sku: "SKU-001", 
+    kategori: "Barang", 
+    harga_per_unit: 15000, 
+    satuan: "PCS", 
+    berat: 200, 
+    dimensi: { panjang: 20, lebar: 10, tinggi: 5 },
+    image: "https://placehold.co/400",
     description: "Tisu wajah isi besar, lembut dan aman untuk kulit wajah sehari-hari..",
     benefit: ["Lembut di kulit wajah", "Menyerap minyak berlebih", "Aman untuk penggunaan harian"],
-    dosage: "Tidak memiliki dosis, digunakan sesuai kebutuhan"
+    dosage: "Tidak memiliki dosis, digunakan sesuai kebutuhan",
+    stok: 100
   },
   { 
-    name: "FITUNO TAB SALUT (BLISTER 3X10 TAB)-BJN", 
-    price: 10000, 
-    stock: 20, 
-    qty: "10pcs", 
-    category: "Obat", 
-    packaging: "Tablet", 
-    image: "/fituno.jpg", 
+    nama_product: "FITUNO TAB SALUT (BLISTER 3X10 TAB)-BJN", 
+    sku: "SKU-002", 
+    kategori: "Obat", 
+    harga_per_unit: 10000, 
+    satuan: "BOX", 
+    berat: 50, 
+    dimensi: { panjang: 10, lebar: 5, tinggi: 2 },
+    image: "/fituno.jpg",
     description: "Suplemen herbal untuk bantu tingkatkan daya tahan tubuh dan pemulihan stamina.",
     benefit: ["Meningkatkan daya tahan tubuh", "Membantu pemulihan stamina", "Mencegah mudah lelah"],
-    dosage: "Dewasa: 1 tablet 1–2 kali sehari setelah makan. Anak-anak: ½ tablet 1 kali sehari setelah makan"
+    dosage: "Dewasa: 1 tablet 1–2 kali sehari setelah makan. Anak-anak: ½ tablet 1 kali sehari setelah makan",
+    stok: 25
   },
   { 
-    name: "PARACETAMOL", 
-    price: 15000, 
-    stock: 0, 
-    qty: "10pcs", 
-    category: "Obat", 
-    packaging: "Tablet", 
-    image: "/Paracetamol.jpg", 
+    nama_product: "PARACETAMOL", 
+    sku: "SKU-003", 
+    kategori: "Obat", 
+    harga_per_unit: 15000, 
+    satuan: "STRIP", 
+    berat: 10, 
+    dimensi: { panjang: 8, lebar: 2, tinggi: 1 },
+    image: "/Paracetamol.jpg",
     description: "",
     benefit: ["Menurunkan demam", "Meredakan sakit kepala", "Mengurangi nyeri ringan hingga sedang"],
-    dosage: "Dewasa: 500–1000 mg setiap 4–6 jam bila perlu (maksimal 4g/hari). Anak-anak: 10–15 mg/kg setiap 4–6 jam bila perlu (maksimal 5 kali sehari)"
+    dosage: "Dewasa: 500–1000 mg setiap 4–6 jam bila perlu (maksimal 4g/hari). Anak-anak: 10–15 mg/kg setiap 4–6 jam bila perlu (maksimal 5 kali sehari)",
+    stok: 0
   },
   { 
-    name: "ENKASARI HERBAL 120ML", 
-    price: 25000, 
-    stock: 20, 
-    qty: "250ml", 
-    category: "Obat", 
-    packaging: "Syrup", 
-    image: "/enkasari.jpg", 
+    nama_product: "ENKASARI HERBAL 120ML", 
+    sku: "SKU-004", 
+    kategori: "Obat",  
+    harga_per_unit: 25000, 
+    satuan: "BOTOL", 
+    berat: 120, 
+    dimensi: { panjang: 15, lebar: 5, tinggi: 5 },
+    image: "/enkasari.jpg",
     description: "Cairan kumur herbal alami untuk menjaga kesehatan mulut dan tenggorokan. Formulanya membantu mengatasi bau mulut, sariawan, dan meredakan radang tenggorokan.",
     benefit: ["Membantu meredakan sariawan", "Mengatasi bau mulut", "Meredakan radang tenggorokan"],
-    dosage: "Dewasa: 2 sendok makan (10 ml), dikumur 2–3 kali sehari. Anak-anak: 1 sendok makan (5 ml), dikumur 2 kali sehari"
+    dosage: "Dewasa: 2 sendok makan (10 ml), dikumur 2–3 kali sehari. Anak-anak: 1 sendok makan (5 ml), dikumur 2 kali sehari",
+    stok: 5
   },
   { 
-    name: "MAGASIDA TABLET (DUS 10 TAB)-BJN", 
-    price: 20000, 
-    stock: 20, 
-    qty: "250ml", 
-    category: "Obat", 
-    packaging: "Syrup", 
-    image: "/magasida.jpg", 
+    nama_product: "MAGASIDA TABLET (DUS 10 TAB)-BJN", 
+    sku: "SKU-005", 
+    kategori: "Obat", 
+    harga_per_unit: 20000, 
+    satuan: "BOX", 
+    berat: 100, 
+    dimensi: { panjang: 12, lebar: 6, tinggi: 3 },
+    image: "/magasida.jpg",
     description: "Obat yang digunakan untuk mengatasi gangguan pada saluran pencernaan seperti gastritis, maag, dispepsia, dan tukak lambung.",
     benefit: ["Meredakan gejala maag", "Mengurangi rasa perih di lambung", "Mengatasi kembung dan gangguan pencernaan"],
-    dosage: "Dewasa: 1–2 tablet, 3 kali sehari sesudah makan. Anak-anak: ½–1 tablet, 2–3 kali sehari sesudah makan"
+    dosage: "Dewasa: 1–2 tablet, 3 kali sehari sesudah makan. Anak-anak: ½–1 tablet, 2–3 kali sehari sesudah makan",
+    stok: 15
   },
   { 
-    name: "BATUGIN ELIXIR BT 120 ML - BJN", 
-    price: 65000, 
-    stock: 20, 
-    qty: "250ml", 
-    category: "Obat", 
-    packaging: "Syrup", 
-    image: "/batugin.jpg", 
+    nama_product: "BATUGIN ELIXIR BT 120 ML - BJN", 
+    sku: "SKU-006", 
+    kategori: "Obat", 
+    harga_per_unit: 65000, 
+    satuan: "BOTOL", 
+    berat: 120, 
+    dimensi: { panjang: 15, lebar: 5, tinggi: 5 },
+    image: "/batugin.jpg",
     description: "Obat herbal pereda batu ginjal, sirup 120ml dari BJN",
     benefit: ["Membantu meluruhkan batu ginjal", "Meredakan nyeri akibat batu ginjal", "Melancarkan buang air kecil"],
-    dosage: "Dewasa: 1 sendok makan (15 ml), diminum 2–3 kali sehari setelah makan. Anak-anak: 1 sendok teh (5 ml), diminum 2 kali sehari setelah makan"
-  },
-  ];
+    dosage: "Dewasa: 1 sendok makan (15 ml), diminum 2–3 kali sehari setelah makan. Anak-anak: 1 sendok teh (5 ml), diminum 2 kali sehari setelah makan",
+    stok: 20
+  }
+];
+
 
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("name-asc");
@@ -113,11 +126,11 @@ export default function Index() {
   // 🔹 Fungsi Add to Cart
   const addToCart = (product: Omit<CartItem, "quantity">) => {
     setCart((prevCart) => {
-      const existing = prevCart.find((item) => item.name === product.name);
+      const existing = prevCart.find((item) => item.nama_product === product.nama_product);
       let newCart;
       if (existing) {
         newCart = prevCart.map((item) =>
-          item.name === product.name
+          item.nama_product === product.nama_product
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
@@ -130,11 +143,10 @@ export default function Index() {
       return newCart;
     });
   };
-
-  // 🔹 filter berdasarkan search
-  let filteredProducts = products.filter((p) =>
-    p.name.toLowerCase().includes(search.toLowerCase())
-  );
+    // 🔹 filter berdasarkan search
+    let filteredProducts = products.filter((p) =>
+      p.nama_product.toLowerCase().includes(search.toLowerCase())
+    );
 
   // ambil filter aktif (tanpa "Semua")
   const activeCategories = filters.categories.filter((c) => c !== "Semua Produk");
@@ -144,10 +156,10 @@ export default function Index() {
   if (!(activeCategories.length === 0 && activePackages.length === 0)) {
     filteredProducts = filteredProducts.filter((p) => {
       const matchCategory =
-        activeCategories.length === 0 || activeCategories.includes(p.category);
+        activeCategories.length === 0 || activeCategories.includes(p.kategori);
 
       const matchPackage =
-        activePackages.length === 0 || activePackages.includes(p.packaging);
+        activePackages.length === 0 || activePackages.includes(p.satuan);
 
       return matchCategory && matchPackage;
     });
@@ -155,13 +167,13 @@ export default function Index() {
 
   // 🔹 sorting
   if (sortBy === "lowest") {
-    filteredProducts = [...filteredProducts].sort((a, b) => a.price - b.price);
+    filteredProducts = [...filteredProducts].sort((a, b) => a.harga_per_unit - b.harga_per_unit);
   } else if (sortBy === "highest") {
-    filteredProducts = [...filteredProducts].sort((a, b) => b.price - a.price);
+    filteredProducts = [...filteredProducts].sort((a, b) => b.harga_per_unit - a.harga_per_unit);
   } else if (sortBy === "name-asc") {
-    filteredProducts = [...filteredProducts].sort((a, b) => a.name.localeCompare(b.name));
+    filteredProducts = [...filteredProducts].sort((a, b) => a.nama_product.localeCompare(b.nama_product));
   } else if (sortBy === "name-desc") {
-    filteredProducts = [...filteredProducts].sort((a, b) => b.name.localeCompare(a.name));
+    filteredProducts = [...filteredProducts].sort((a, b) => b.nama_product.localeCompare(a.nama_product));
   }
 
   return (
@@ -242,7 +254,7 @@ export default function Index() {
     {selectedProduct && (
       <>
         <DialogHeader>
-          <DialogTitle>{selectedProduct.name}</DialogTitle>
+          <DialogTitle>{selectedProduct.nama_product}</DialogTitle>
           <DialogDescription>
             {selectedProduct.description || "Tidak ada deskripsi tersedia."}
           </DialogDescription>
@@ -251,15 +263,16 @@ export default function Index() {
         <div className="flex flex-col sm:flex-row gap-4">
           <img
             src={selectedProduct.image}
-            alt={selectedProduct.name}
+            alt={selectedProduct.nama_product}
             className="w-full sm:w-1/3 rounded-lg border object-cover"
           />
           <div className="flex-1 space-y-2">
-            <p><strong>Harga:</strong> Rp{selectedProduct.price.toLocaleString()}</p>
-            <p><strong>Stok:</strong> {selectedProduct.stock > 0 ? selectedProduct.stock : "Habis"}</p>
-            <p><strong>Kategori:</strong> {selectedProduct.category}</p>
-            <p><strong>Kemasan:</strong> {selectedProduct.packaging}</p>
-            <p><strong>Kuantitas:</strong> {selectedProduct.qty}</p>
+            <p><strong>Harga:</strong> Rp{selectedProduct.harga_per_unit.toLocaleString()}</p>
+            <p><strong>Stok:</strong> {selectedProduct?.stok && selectedProduct.stok > 0 ? selectedProduct.stok : "Habis"}</p>
+            <p><strong>Kategori:</strong> {selectedProduct.kategori}</p>
+            <p><strong>Kemasan:</strong> {selectedProduct.satuan}</p>
+            <p><strong>Kuantitas:</strong> {selectedProduct.berat}</p>
+            <p><strong>Berat:</strong> {selectedProduct.berat} gr</p>
           </div>
         </div>
 
@@ -284,7 +297,7 @@ export default function Index() {
 
           <TabsContent value="dosage" className="mt-2 text-sm text-gray-700">
             <div className="space-y-1">
-              {selectedProduct.dosage.split('. ').map((line: string, idx: number) => {
+              {(selectedProduct.dosage ?? "").split('. ').map((line: string, idx: number) => {
                 const formatted = line
                   .replace(/Dewasa:/g, '<strong>Dewasa:</strong>')
                   .replace(/Anak-anak:/g, '<strong>Anak-anak:</strong>');
