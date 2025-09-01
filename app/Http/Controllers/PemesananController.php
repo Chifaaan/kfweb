@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Product;
+use App\Models\Order;
 
 
 class PemesananController extends Controller
@@ -26,8 +27,16 @@ class PemesananController extends Controller
         return Inertia::render('Pemesanan/PO', []);
     }
 
-    public function history(){
-        return Inertia::render('Pemesanan/History', []);
+    public function history()
+    {
+        $orders = Order::with(['products' => function ($q) {
+            $q->select('products.id', 'sku', 'nama_product', 'harga_per_unit', 'image')
+              ->withPivot('quantity');
+        }])->latest()->get();
+
+        return Inertia::render('Pemesanan/History', [
+            'orders' => $orders,
+        ]);
     }
 
 }

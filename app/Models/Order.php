@@ -23,6 +23,10 @@ class Order extends Model
         'timestamp',
     ];
 
+    protected $casts = [
+        'product_detail' => 'array',
+    ];
+
     public function products()
     {
         return $this->belongsToMany(Product::class, 'order_product')
