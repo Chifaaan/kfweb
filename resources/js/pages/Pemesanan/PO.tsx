@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import AppLayout from "@/layouts/app-layout";
-import { Head } from "@inertiajs/react";
+import { Head, router } from "@inertiajs/react";
 import { type BreadcrumbItem, CartItem, Order } from "@/types";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -54,41 +54,39 @@ export default function PurchaseOrderPage() {
       ? "Pembayaran menggunakan Kredit Koperasi"
       : `Pembayaran menggunakan Bank Virtual Account ${accountBank || "-"} (VA ${vaNumber || "-"})`;
 
-  const handleSubmit = () => {
-    if (isCreditNotEnough) return;
+const handleSubmit = () => {
+  if (isCreditNotEnough) return;
 
-    const order: Order = {
-      id_transaksi: `TRX-${Date.now()}`,
-      id_koperasi: koperasiInfo.koperasi_id,
-      status: "Process",
-      merchant_id: koperasiInfo.merchant_id,
-      merchant_name: koperasiInfo.merchant_name,
-      total_nominal: total,
-      remaining_credit: remainingCredit - (paymentMethod === "Kredit" ? total : 0),
-      is_for_sale: false, // default false
-      account_no: accountNo,
-      account_bank: accountBank,
-      payment_type: paymentMethod === "Kredit" ? "Cash Against Document" : "Virtual Account",
-      payment_method: paymentMethod,
-      va_number: vaNumber,
-      timestamp: new Date().toISOString(),
-      product_detail: cartItems.map((item) => ({
-        sku: item.sku,
-        nama_product: item.nama_product,
-        harga_per_unit: item.harga_per_unit,
-        quantity: item.quantity,
-        image: item.image,
-        kategori: item.kategori ?? "",
-        satuan: item.satuan ?? "",
-        berat: item.berat ?? 0,
-        dimensi: item.dimensi ?? "",
-      })),
-    };
-
-    console.log("✅ Order Dibuat:", order);
-
-    setShowDialog(null);
+  const order: Order = {
+    id_transaksi: `TRX-${Date.now()}`,
+    id_koperasi: koperasiInfo.koperasi_id,
+    status: "Process",
+    merchant_id: koperasiInfo.merchant_id,
+    merchant_name: koperasiInfo.merchant_name,
+    total_nominal: total,
+    remaining_credit: remainingCredit - (paymentMethod === "Kredit" ? total : 0),
+    is_for_sale: false,
+    account_no: accountNo,
+    account_bank: accountBank,
+    payment_type: paymentMethod === "Kredit" ? "Cash Against Document" : "Virtual Account",
+    payment_method: paymentMethod,
+    va_number: vaNumber,
+    timestamp: new Date().toISOString().slice(0, 19).replace("T", " "),
+    product_detail: cartItems.map((item) => ({
+      sku: item.sku,
+      quantity: item.quantity,
+    })),
   };
+
+  router.post(route("po.store"), { ...order }, {
+    onSuccess: () => {
+      localStorage.removeItem("cart");
+      setCartItems([]);
+    },
+  });
+  console.log("Order submitted:", order);
+  setShowDialog(null);
+};
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>

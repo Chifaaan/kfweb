@@ -19,7 +19,10 @@ class ProductSeeder extends Seeder
             'dimensi' => json_encode(['panjang' => 20, 'lebar' => 10, 'tinggi' => 5]),
             'image' => 'https://placehold.co/400',
             'description' => 'Tisu wajah isi besar...',
-            'benefit' => json_encode(['Lembut di kulit wajah', 'Menyerap minyak berlebih']),
+            'benefit' => [
+                "Lembut di kulit wajah",
+                "Menyerap minyak berlebih",
+            ],
             'dosage' => 'Tidak memiliki dosis, digunakan sesuai kebutuhan',
             'stok' => 100,
         ]);
@@ -34,7 +37,10 @@ class ProductSeeder extends Seeder
             'dimensi' => json_encode(['panjang' => 10, 'lebar' => 5, 'tinggi' => 2]),
             'image' => '/fituno.jpg',
             'description' => 'Suplemen herbal...',
-            'benefit' => json_encode(['Meningkatkan daya tahan tubuh', 'Membantu pemulihan stamina']),
+            'benefit' => [
+                "Meningkatkan daya tahan tubuh",
+                "Membantu pemulihan stamina",
+            ],
             'dosage' => 'Dewasa: 1 tablet 1–2 kali sehari setelah makan. Anak-anak: ½ tablet 1 kali sehari setelah makan',
             'stok' => 25,
         ]);
@@ -49,7 +55,11 @@ class ProductSeeder extends Seeder
             'dimensi' => json_encode(['panjang' => 10, 'lebar' => 5, 'tinggi' => 2]),
             'image' => '/Paracetamol.jpg',
             'description' => 'Obat Sakit Kepala',
-            'benefit' => json_encode(['Menurunkan deman', 'Meredakan sakit kepala', 'Mengurangi nyeri kepala']),
+            'benefit' => [
+                "Menurunkan deman",
+                "Meredakan sakit kepala",
+                "Mengurangi nyeri kepala"
+            ],
             'dosage' => 'Dewasa: 500–1000 mg setiap 4–6 jam bila perlu (maksimal 4g/hari). Anak-anak: 10–15 mg/kg setiap 4–6 jam bila perlu (maksimal 5 kali sehari)',
             'stok' => 0,
         ]);
@@ -64,7 +74,10 @@ class ProductSeeder extends Seeder
             'dimensi' => json_encode(['panjang' => 10, 'lebar' => 5, 'tinggi' => 2]),
             'image' => '/enkasari.jpg',
             'description' => 'Cairan kumur herbal alami untuk menjaga kesehatan mulut dan tenggorokan. Formulanya membantu mengatasi bau mulut, sariawan, dan meredakan radang tenggorokan.',
-            'benefit' => json_encode(['Menjaga kesehatan mulut dan tenggorokan', 'Mengatasi bau mulut, sariawan, dan radang tenggorokan']),
+            'benefit' => [
+                "Menjaga kesehatan mulut dan tenggorokan",
+                "Mengatasi bau mulut, sariawan, dan radang tenggorokan",
+            ],
             'dosage' => 'Dewasa: 1 sachet 1 kali sehari. Anak-anak: 1 sachet 1 kali sehari.',
             'stok' => 5
         ]);
@@ -79,7 +92,11 @@ class ProductSeeder extends Seeder
             'dimensi' => json_encode(['panjang' => 10, 'lebar' => 5, 'tinggi' => 2]),
             'image' => '/magasida.jpg',
             'description' => 'Obat yang digunakan untuk mengatasi gangguan pada saluran pencernaan seperti gastritis, maag, dispepsia, dan tukak lambung.',
-            'benefit' => json_encode(["Meredakan gejala maag", "Mengurangi rasa perih di lambung", "Mengatasi kembung dan gangguan pencernaan"]),
+            'benefit' => [
+                "Meredakan gejala maag",
+                "Mengurangi rasa perih di lambung",
+                "Mengatasi kembung dan gangguan pencernaan"
+            ],
             'dosage' => 'Dewasa: 1–2 tablet, 3 kali sehari sesudah makan. Anak-anak: ½–1 tablet, 2–3 kali sehari sesudah makan',
             'stok' => 20
         ]);
@@ -94,7 +111,11 @@ class ProductSeeder extends Seeder
             'dimensi' => json_encode(['panjang' => 10, 'lebar' => 5, 'tinggi' => 2]),
             'image' => '/batugin.jpg',
             'description' => 'Obat yang digunakan untuk mengatasi gangguan pada saluran pencernaan seperti gastritis, maag, dispepsia, dan tukak lambung.',
-            'benefit' => json_encode(["Meredakan gejala maag", "Mengurangi rasa perih di lambung", "Mengatasi kembung dan gangguan pencernaan"]),
+            'benefit' => [
+                "Meredakan gejala maag",
+                "Mengurangi rasa perih di lambung",
+                "Mengatasi kembung dan gangguan pencernaan"
+            ],
             'dosage' => 'Dewasa: 1–2 tablet, 3 kali sehari sesudah makan. Anak-anak: ½–1 tablet, 2–3 kali sehari sesudah makan',
             'stok' => 20
         ]);

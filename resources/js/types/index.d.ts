@@ -87,7 +87,10 @@ export interface Order {
   payment_method: string;
   va_number: string;
   timestamp: string;
-  product_detail: Product[]; // ⬅️ relasi ke Product
+    product_detail: {
+    sku: string;
+    quantity: number;
+  }[]; //Relasi ke Product
 }
 
 export interface Penerimaan {

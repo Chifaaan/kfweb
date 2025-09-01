@@ -17,13 +17,11 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-interface Props extends Product {
+interface Props {
   products: Product[];
 }
 export default function Index({ products }: Props) {
-
-
-
+  console.log("Products from Laravel:", products); // Debugging
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("name-asc");
   const [filters, setFilters] = useState({ categories: ["Semua Produk"], packages: ["Semua Package"] });
