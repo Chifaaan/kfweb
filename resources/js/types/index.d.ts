@@ -50,11 +50,6 @@ export interface User {
 }
 
 export interface CartItem extends Product {
-  name: string;
-  image: string;
-  qty: string;
-  packaging: string;
-  price: number;
   quantity: number;
   total: number;
 }

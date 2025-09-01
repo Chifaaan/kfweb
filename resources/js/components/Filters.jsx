@@ -5,7 +5,7 @@ export default function Filters({ onFilterChange }) {
   const [selectedPackages, setSelectedPackages] = useState([]);
 
   const categories = ["Obat", "Vitamin", "Antibiotik"];
-  const packages = ["Tablet", "Kapsul", "Syrup"];
+  const packages = ["PCS", "BOTOL", "BOX"];
 
   // toggle category
   const toggleCategory = (cat) => {

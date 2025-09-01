@@ -14,7 +14,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
-    Route::get('pemesanan/medicines', [PemesananController::class , 'index'])->name('medicines');
+    Route::get('pemesanan/medicines', [PemesananController::class, 'index'])->name('medicines');
     Route::get('pemesanan/cart', [PemesananController::class , 'cart'])->name('cart');
     Route::get('pemesanan/po', [PemesananController::class , 'po'])->name('po');
     Route::get('pemesanan/history', [PemesananController::class , 'history'])->name('history');

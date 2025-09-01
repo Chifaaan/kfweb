@@ -17,93 +17,11 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-export default function Index() {
-const products: Product[] = [
-  { 
-    nama_product: "KF FACIAL TISSUE 200S ANIMAL", 
-    sku: "SKU-001", 
-    kategori: "Barang", 
-    harga_per_unit: 15000, 
-    satuan: "PCS", 
-    berat: 200, 
-    dimensi: { panjang: 20, lebar: 10, tinggi: 5 },
-    image: "https://placehold.co/400",
-    description: "Tisu wajah isi besar, lembut dan aman untuk kulit wajah sehari-hari..",
-    benefit: ["Lembut di kulit wajah", "Menyerap minyak berlebih", "Aman untuk penggunaan harian"],
-    dosage: "Tidak memiliki dosis, digunakan sesuai kebutuhan",
-    stok: 100
-  },
-  { 
-    nama_product: "FITUNO TAB SALUT (BLISTER 3X10 TAB)-BJN", 
-    sku: "SKU-002", 
-    kategori: "Obat", 
-    harga_per_unit: 10000, 
-    satuan: "BOX", 
-    berat: 50, 
-    dimensi: { panjang: 10, lebar: 5, tinggi: 2 },
-    image: "/fituno.jpg",
-    description: "Suplemen herbal untuk bantu tingkatkan daya tahan tubuh dan pemulihan stamina.",
-    benefit: ["Meningkatkan daya tahan tubuh", "Membantu pemulihan stamina", "Mencegah mudah lelah"],
-    dosage: "Dewasa: 1 tablet 1–2 kali sehari setelah makan. Anak-anak: ½ tablet 1 kali sehari setelah makan",
-    stok: 25
-  },
-  { 
-    nama_product: "PARACETAMOL", 
-    sku: "SKU-003", 
-    kategori: "Obat", 
-    harga_per_unit: 15000, 
-    satuan: "STRIP", 
-    berat: 10, 
-    dimensi: { panjang: 8, lebar: 2, tinggi: 1 },
-    image: "/Paracetamol.jpg",
-    description: "",
-    benefit: ["Menurunkan demam", "Meredakan sakit kepala", "Mengurangi nyeri ringan hingga sedang"],
-    dosage: "Dewasa: 500–1000 mg setiap 4–6 jam bila perlu (maksimal 4g/hari). Anak-anak: 10–15 mg/kg setiap 4–6 jam bila perlu (maksimal 5 kali sehari)",
-    stok: 0
-  },
-  { 
-    nama_product: "ENKASARI HERBAL 120ML", 
-    sku: "SKU-004", 
-    kategori: "Obat",  
-    harga_per_unit: 25000, 
-    satuan: "BOTOL", 
-    berat: 120, 
-    dimensi: { panjang: 15, lebar: 5, tinggi: 5 },
-    image: "/enkasari.jpg",
-    description: "Cairan kumur herbal alami untuk menjaga kesehatan mulut dan tenggorokan. Formulanya membantu mengatasi bau mulut, sariawan, dan meredakan radang tenggorokan.",
-    benefit: ["Membantu meredakan sariawan", "Mengatasi bau mulut", "Meredakan radang tenggorokan"],
-    dosage: "Dewasa: 2 sendok makan (10 ml), dikumur 2–3 kali sehari. Anak-anak: 1 sendok makan (5 ml), dikumur 2 kali sehari",
-    stok: 5
-  },
-  { 
-    nama_product: "MAGASIDA TABLET (DUS 10 TAB)-BJN", 
-    sku: "SKU-005", 
-    kategori: "Obat", 
-    harga_per_unit: 20000, 
-    satuan: "BOX", 
-    berat: 100, 
-    dimensi: { panjang: 12, lebar: 6, tinggi: 3 },
-    image: "/magasida.jpg",
-    description: "Obat yang digunakan untuk mengatasi gangguan pada saluran pencernaan seperti gastritis, maag, dispepsia, dan tukak lambung.",
-    benefit: ["Meredakan gejala maag", "Mengurangi rasa perih di lambung", "Mengatasi kembung dan gangguan pencernaan"],
-    dosage: "Dewasa: 1–2 tablet, 3 kali sehari sesudah makan. Anak-anak: ½–1 tablet, 2–3 kali sehari sesudah makan",
-    stok: 15
-  },
-  { 
-    nama_product: "BATUGIN ELIXIR BT 120 ML - BJN", 
-    sku: "SKU-006", 
-    kategori: "Obat", 
-    harga_per_unit: 65000, 
-    satuan: "BOTOL", 
-    berat: 120, 
-    dimensi: { panjang: 15, lebar: 5, tinggi: 5 },
-    image: "/batugin.jpg",
-    description: "Obat herbal pereda batu ginjal, sirup 120ml dari BJN",
-    benefit: ["Membantu meluruhkan batu ginjal", "Meredakan nyeri akibat batu ginjal", "Melancarkan buang air kecil"],
-    dosage: "Dewasa: 1 sendok makan (15 ml), diminum 2–3 kali sehari setelah makan. Anak-anak: 1 sendok teh (5 ml), diminum 2 kali sehari setelah makan",
-    stok: 20
-  }
-];
+interface Props extends Product {
+  products: Product[];
+}
+export default function Index({ products }: Props) {
+
 
 
   const [search, setSearch] = useState("");

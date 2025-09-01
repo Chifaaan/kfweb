@@ -100,7 +100,7 @@ export default function Cart() {
                         {item.berat} gram per {item.satuan} | Stok: {item.stok ?? 0}
                       </p>
                       <p className="text-blue-600 font-bold text-sm sm:text-base">
-                        Rp {item.harga_per_unit.toLocaleString()}
+                        Rp {item.harga_per_unit.toLocaleString() || '0'}
                       </p>
                     </div>
                   </div>
