@@ -57,6 +57,8 @@ export default function PurchaseOrderPage() {
 const handleSubmit = () => {
   if (isCreditNotEnough) return;
 
+  const isKredit = paymentMethod === "Kredit";
+
   const order: Order = {
     id_transaksi: `TRX-${Date.now()}`,
     id_koperasi: koperasiInfo.koperasi_id,
@@ -64,13 +66,13 @@ const handleSubmit = () => {
     merchant_id: koperasiInfo.merchant_id,
     merchant_name: koperasiInfo.merchant_name,
     total_nominal: total,
-    remaining_credit: remainingCredit - (paymentMethod === "Kredit" ? total : 0),
+    remaining_credit: isKredit ? remainingCredit - total : remainingCredit,
     is_for_sale: false,
-    account_no: accountNo,
-    account_bank: accountBank,
-    payment_type: paymentMethod === "Kredit" ? "Cash Against Document" : "Virtual Account",
+    account_no: isKredit ? "" : accountNo,
+    account_bank: isKredit ? "" : accountBank,
+    payment_type: isKredit ? "CAD" : "Virtual Account",
     payment_method: paymentMethod,
-    va_number: vaNumber,
+    va_number: isKredit ? "" : vaNumber,
     timestamp: new Date().toISOString().slice(0, 19).replace("T", " "),
     product_detail: cartItems.map((item) => ({
       sku: item.sku,
@@ -78,7 +80,7 @@ const handleSubmit = () => {
     })),
   };
 
-  router.post(route("po.store"), { ...order }, {
+  router.post(route("po.store"), {...order}, {
     onSuccess: () => {
       localStorage.removeItem("cart");
       setCartItems([]);

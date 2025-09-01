@@ -18,8 +18,8 @@ return new class extends Migration
             $table->decimal('total_nominal', 15, 2);
             $table->decimal('remaining_credit', 15, 2);
             $table->boolean('is_for_sale')->default(false);
-            $table->string('account_no');
-            $table->string('account_bank');
+            $table->string('account_no')->nullable();
+            $table->string('account_bank')->nullable();
             $table->string('payment_type');
             $table->string('payment_method');
             $table->string('va_number')->nullable();
