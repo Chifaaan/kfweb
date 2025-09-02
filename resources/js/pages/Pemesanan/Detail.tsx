@@ -10,6 +10,7 @@ import type { BreadcrumbItem, ProductPivot } from '@/types';
 const breadcrumbs: BreadcrumbItem[] = [
   { title: "Dashboard", href: "/dashboard" },
   { title: "Order History", href: "/pemesanan/history" },
+  { title: "Order Detail", href: "#"},
 ];
 
 type TimelineItem = { key: string; label: string; time: string | null };
@@ -31,7 +32,7 @@ export default function Detail() {
 
   const subtotal = order.products?.reduce((acc: number, p: ProductPivot) => {
     const q = p.pivot?.quantity ?? 1;
-    return acc + (p.harga_per_unit * q);
+    return acc + (p.price * q);
   }, 0) ?? 0;
 
   return (
@@ -147,18 +148,18 @@ export default function Detail() {
                   <div key={p.id} className="flex items-center gap-4">
                     <img
                       src={p.image || '/images/placeholder.png'}
-                      alt={p.nama_product}
+                      alt={p.name}
                       className="w-16 h-16 object-cover rounded"
                     />
                     <div className="flex-1">
-                      <div className="font-medium">{p.nama_product}</div>
+                      <div className="font-medium">{p.name}</div>
                       <div className="text-sm text-muted-foreground">SKU: {p.sku}</div>
                       <div className="text-sm">Qty: {p.pivot?.quantity ?? 1}</div>
                     </div>
                     <div className="text-right">
-                      <div className="font-semibold">{currency(p.harga_per_unit)}</div>
+                      <div className="font-semibold">{currency(p.price)}</div>
                       <div className="text-sm text-muted-foreground">
-                        {currency((p.pivot?.quantity ?? 1) * p.harga_per_unit)}
+                        {currency((p.pivot?.quantity ?? 1) * p.price)}
                       </div>
                     </div>
                   </div>

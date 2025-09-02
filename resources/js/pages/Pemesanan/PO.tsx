@@ -41,7 +41,7 @@ export default function PurchaseOrderPage() {
   }, []);
 
   // Perhitungan order
-  const subtotal = cartItems.reduce((sum, item) => sum + item.harga_per_unit * item.quantity, 0);
+  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const ppn = subtotal * 0.11;
   const total = subtotal + ppn;
 
@@ -216,15 +216,15 @@ const handleSubmit = () => {
                         <TableCell className="flex items-center gap-2">
                           <img
                             src={item.image}
-                            alt={item.nama_product}
+                            alt={item.name}
                             className="w-10 h-10 rounded object-cover"
                           />
-                          {item.nama_product}
+                          {item.name}
                         </TableCell>
                         <TableCell>{item.quantity}</TableCell>
-                        <TableCell>Rp {item.harga_per_unit.toLocaleString()}</TableCell>
+                        <TableCell>Rp {item.price.toLocaleString()}</TableCell>
                         <TableCell>
-                          Rp {(item.harga_per_unit * item.quantity).toLocaleString()}
+                          Rp {(item.price * item.quantity).toLocaleString()}
                         </TableCell>
                       </TableRow>
                     ))}

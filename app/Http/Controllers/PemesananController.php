@@ -7,30 +7,34 @@ use Inertia\Inertia;
 use App\Models\Product;
 use App\Models\Order;
 
-
 class PemesananController extends Controller
 {
-    public function index(){
+    public function index()
+    {
+        // Ambil semua produk dengan kategori (hanya id & main_category biar ringan)
+        $products = Product::with('category:id,main_category')
+            ->get(['id', 'sku', 'name', 'price', 'image', 'category_id', 'order_unit', 'is_active', 'content', 'base_uom', 'weight', 'pharmacology', 'dosage', 'description']);
     
-        $products = Product::all();
 
         return Inertia::render('Pemesanan/Index', [
             'products' => $products
         ]);
     }
 
-    public function cart(){
+    public function cart()
+    {
         return Inertia::render('Pemesanan/Cart', []);
     }
 
-    public function po(){
+    public function po()
+    {
         return Inertia::render('Pemesanan/PO', []);
     }
 
     public function history()
     {
         $orders = Order::with(['products' => function ($q) {
-            $q->select('products.id', 'sku', 'nama_product', 'harga_per_unit', 'image')
+            $q->select('products.id', 'sku', 'name', 'price', 'image')
               ->withPivot('quantity');
         }])->latest()->get();
 
@@ -44,7 +48,7 @@ class PemesananController extends Controller
     {
         $order = Order::with([
             'products' => function ($q) {
-                $q->select('products.id', 'sku', 'nama_product', 'harga_per_unit', 'image')
+                $q->select('products.id', 'sku', 'name', 'price', 'image')
                   ->withPivot('quantity');
             },
             'buyerAddress'
@@ -59,9 +63,8 @@ class PemesananController extends Controller
         ];
 
         return Inertia::render('Pemesanan/Detail', [
-            'order' => $order,
-            'timeline' => $timeline,
+            'order'   => $order,
+            'timeline'=> $timeline,
         ]);
     }
-
 }

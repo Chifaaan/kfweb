@@ -24,7 +24,7 @@ export default function Cart() {
           ? {
               ...item,
               quantity: Math.max(0, item.quantity + delta),
-              total: (Math.max(0, item.quantity + delta)) * item.harga_per_unit,
+              total: (Math.max(0, item.quantity + delta)) * Number(item.price),
             }
           : item
       )
@@ -45,7 +45,7 @@ export default function Cart() {
     localStorage.removeItem("cart");
   };
 
-  const subtotal = cart.reduce((sum, item) => sum + item.harga_per_unit * item.quantity,0);
+  const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity,0);
   const ppn = subtotal * 0.11;
   const grandTotal = subtotal + ppn;
 
@@ -89,18 +89,18 @@ export default function Cart() {
                   <div className="flex items-center gap-4">
                     <img
                       src={item.image}
-                      alt={item.nama_product}
+                      alt={item.name}
                       className="w-16 h-16 rounded-md object-cover"
                     />
                     <div>
                       <h2 className="font-semibold text-base sm:text-lg">
-                        {item.nama_product}
+                        {item.name}
                       </h2>
                       <p className="text-sm text-gray-600">
-                        {item.berat} gram per {item.satuan} | Stok: {item.stok ?? 0}
+                        {item.weight} gram per {item.order_unit}
                       </p>
                       <p className="text-blue-600 font-bold text-sm sm:text-base">
-                        Rp {item.harga_per_unit.toLocaleString() || '0'}
+                        Rp {(item.price ?? 0).toLocaleString()}
                       </p>
                     </div>
                   </div>
@@ -116,7 +116,6 @@ export default function Cart() {
                     <span className="font-semibold">{item.quantity}</span>
                     <button
                       onClick={() => updateQuantity(item.sku, 1)}
-                      disabled={item.quantity >= (item.stok ?? 0)}
                       className="px-2 py-1 sm:px-3 sm:py-1 bg-gray-200 rounded-md hover:bg-gray-300 disabled:opacity-50"
                     >
                       +

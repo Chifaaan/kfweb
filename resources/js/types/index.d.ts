@@ -31,8 +31,8 @@ export type NavSection = {
 export type ProductPivot = {
   id: number;
   sku: string;
-  nama_product: string;
-  harga_per_unit: number;
+  name: string;
+  price: number;
   image?: string;
   pivot?: { quantity: number };
 };
@@ -73,22 +73,27 @@ export interface CartItem extends Product {
   total: number;
 }
 export interface Product {
-  nama_product: string;
+  id: number;
   sku: string;
-  kategori: string;        
-  harga_per_unit: number;
-  satuan: string;           
-  berat: number;            
-  dimensi: {                
-    panjang: number;
-    lebar: number;
-    tinggi: number;
-  };
+  name: string;
+  slug: string;
+  category_id?: number;
+  price: number;
+  weight: number;
+  length?: number;
+  width?: number;
+  height?: number;
+  base_uom: string;
+  order_unit: string;
+  content: number;
+  brand?: string;
   image?: string;
-  description?: string;    
-  benefit?: string[];      
-  dosage?: string;   
-  stok?: number;      
+  description?: string;
+  dosage?: string[]; 
+  pharmacology?: string;
+  image_alt?: string;
+  is_active?: boolean;
+  is_featured?: boolean;
 }
 
 export interface Order {

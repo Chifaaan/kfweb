@@ -8,21 +8,29 @@ return new class extends Migration
 {
     public function up(): void
     {
-    Schema::create('products', function (Blueprint $table) {
-        $table->id();
-        $table->string('nama_product');
-        $table->string('sku')->unique();
-        $table->string('kategori');
-        $table->decimal('harga_per_unit', 12, 2);
-        $table->string('satuan');
-        $table->integer('berat');
-        $table->json('dimensi'); // simpan panjang, lebar, tinggi
-        $table->string('image')->nullable();
-        $table->text('description')->nullable();
-        $table->json('benefit')->nullable();
-        $table->text('dosage')->nullable();
-        $table->integer('stok')->default(0);
-        $table->timestamps();
+        Schema::create('products', function (Blueprint $table) {
+            $table->id();
+            $table->string('sku');
+            $table->string('name');
+            $table->string('slug');
+            $table->unsignedBigInteger('category_id');
+            $table->float('price')->default(1);
+            $table->integer('weight')->default(100);
+            $table->integer('length')->nullable();
+            $table->integer('width')->nullable();
+            $table->integer('height')->nullable();
+            $table->boolean('is_active')->default(true);
+            $table->string('image')->nullable();
+            $table->string('brand')->nullable();
+            $table->text('description')->nullable();
+            $table->json('dosage')->nullable();
+            $table->text('pharmacology')->nullable();
+            $table->string('base_uom');
+            $table->string('order_unit');
+            $table->integer('content');
+            $table->string('image_alt')->nullable();
+            $table->boolean('is_featured')->default(false);
+            $table->timestamps();
         });
     }
 

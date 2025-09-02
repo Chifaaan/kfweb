@@ -8,21 +8,29 @@ class Product extends Model
 {
     protected $fillable = [
         'sku',
-        'nama_product',
-        'harga_per_unit',
-        'stok',
-        'kategori',
-        'satuan',
-        'berat',
+        'name',
+        'slug',
+        'category_id',
+        'price',
+        'weight',
+        'length',
+        'width',
+        'height',
+        'is_active',
         'image',
+        'brand',
         'description',
-        'benefit',
         'dosage',
+        'pharmacology',
+        'base_uom',
+        'order_unit',
+        'content',
+        'image_alt',
+        'is_featured',
     ];
 
     protected $casts = [
-        'benefit' => 'array', // biar benefit otomatis jadi array
-        'dimensi' => 'array',
+        'dosage' => 'array',
     ];
 
     public function orders()
@@ -30,5 +38,11 @@ class Product extends Model
         return $this->belongsToMany(Order::class, 'order_product')
             ->withPivot('quantity')
             ->withTimestamps();
+    }
+
+    // Relasi ke Category
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'category_id');
     }
 }

@@ -1,7 +1,7 @@
 import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
 import { CartItem, Product, type BreadcrumbItem } from '@/types';
-import { Head, Link } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
 import Filters from "@/components/Filters";
 import ProductCard from "@/components/ProductCard";
 import { useState, useEffect } from "react";
@@ -21,17 +21,16 @@ interface Props {
   products: Product[];
 }
 export default function Index({ products }: Props) {
-  console.log("Products from Laravel:", products); // Debugging
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("name-asc");
   const [filters, setFilters] = useState({ categories: ["Semua Produk"], packages: ["Semua Package"] });
   const [cart, setCart] = useState<CartItem[]>([]);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null); // 🔹 modal state
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
-  // 🔹 Hitung total item dalam cart
-  const totalItems = cart.length; // jumlah jenis produk unik
+  // 🔹 jumlah jenis produk unik
+  const totalItems = cart.length;
 
-  // 🔹 Load cart dari localStorage saat pertama kali render
+  // 🔹 Load cart dari localStorage
   useEffect(() => {
     const storedCart = localStorage.getItem("cart");
     if (storedCart) {
@@ -39,32 +38,31 @@ export default function Index({ products }: Props) {
     }
   }, []);
 
-  // 🔹 Fungsi Add to Cart
+  // 🔹 Add to Cart
   const addToCart = (product: Omit<CartItem, "quantity">) => {
     setCart((prevCart) => {
-      const existing = prevCart.find((item) => item.nama_product === product.nama_product);
+      const existing = prevCart.find((item) => item.name === product.name);
       let newCart;
       if (existing) {
         newCart = prevCart.map((item) =>
-          item.nama_product === product.nama_product
+          item.name === product.name
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
       } else {
         newCart = [...prevCart, { ...product, quantity: 1 }];
       }
-
-      // Simpan ke localStorage
       localStorage.setItem("cart", JSON.stringify(newCart));
       return newCart;
     });
   };
-    // 🔹 filter berdasarkan search
-    let filteredProducts = products.filter((p) =>
-      p.nama_product.toLowerCase().includes(search.toLowerCase())
-    );
 
-  // ambil filter aktif (tanpa "Semua")
+  // 🔹 filter berdasarkan search
+  let filteredProducts = products.filter((p) =>
+    p.name.toLowerCase().includes(search.toLowerCase())
+  );
+
+  // ambil filter aktif
   const activeCategories = filters.categories.filter((c) => c !== "Semua Produk");
   const activePackages = filters.packages.filter((p) => p !== "Semua Package");
 
@@ -72,10 +70,10 @@ export default function Index({ products }: Props) {
   if (!(activeCategories.length === 0 && activePackages.length === 0)) {
     filteredProducts = filteredProducts.filter((p) => {
       const matchCategory =
-        activeCategories.length === 0 || activeCategories.includes(p.kategori);
+        activeCategories.length === 0 || activeCategories.includes(String(p.category_id));
 
       const matchPackage =
-        activePackages.length === 0 || activePackages.includes(p.satuan);
+        activePackages.length === 0 || activePackages.includes(p.order_unit);
 
       return matchCategory && matchPackage;
     });
@@ -83,13 +81,13 @@ export default function Index({ products }: Props) {
 
   // 🔹 sorting
   if (sortBy === "lowest") {
-    filteredProducts = [...filteredProducts].sort((a, b) => a.harga_per_unit - b.harga_per_unit);
+    filteredProducts = [...filteredProducts].sort((a, b) => a.price - b.price);
   } else if (sortBy === "highest") {
-    filteredProducts = [...filteredProducts].sort((a, b) => b.harga_per_unit - a.harga_per_unit);
+    filteredProducts = [...filteredProducts].sort((a, b) => b.price - a.price);
   } else if (sortBy === "name-asc") {
-    filteredProducts = [...filteredProducts].sort((a, b) => a.nama_product.localeCompare(b.nama_product));
+    filteredProducts = [...filteredProducts].sort((a, b) => a.name.localeCompare(b.name));
   } else if (sortBy === "name-desc") {
-    filteredProducts = [...filteredProducts].sort((a, b) => b.nama_product.localeCompare(a.nama_product));
+    filteredProducts = [...filteredProducts].sort((a, b) => b.name.localeCompare(a.name));
   }
 
   return (
@@ -127,25 +125,25 @@ export default function Index({ products }: Props) {
             </Select>
           </div>
 
-        {/* Produk */}
-        {filteredProducts.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-gray-500">
-            <ShoppingCart size={64} className="mb-4 text-gray-400" />
-            <p className="text-lg font-medium">Produk yang anda cari tidak ditemukan</p>
-          </div>
-            ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {filteredProducts.map((p, i) => (
-              <div
-                key={i}
-                onClick={() => setSelectedProduct(p)}
-                className="cursor-pointer"
-              >
-                <ProductCard product={p} addToCart={addToCart} />
-              </div>
-            ))}
-          </div>
-        )}
+          {/* Produk */}
+          {filteredProducts.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-20 text-gray-500">
+              <ShoppingCart size={64} className="mb-4 text-gray-400" />
+              <p className="text-lg font-medium">Produk yang anda cari tidak ditemukan</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {filteredProducts.map((p, i) => (
+                <div
+                  key={i}
+                  onClick={() => setSelectedProduct(p)}
+                  className="cursor-pointer"
+                >
+                  <ProductCard product={p} addToCart={addToCart} />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
@@ -155,7 +153,6 @@ export default function Index({ products }: Props) {
           <button className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg">
             <ShoppingCart size={24} className="sm:size-8" />
           </button>
-
           {totalItems > 0 && (
             <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center">
               {totalItems}
@@ -164,75 +161,65 @@ export default function Index({ products }: Props) {
         </a>
       </div>
 
-{/* 🔹 Modal Detail Produk */}
-<Dialog open={!!selectedProduct} onOpenChange={() => setSelectedProduct(null)}>
-  <DialogContent className="w-[95%] sm:max-w-lg md:max-w-2xl max-h-[90vh] overflow-y-auto">
-    {selectedProduct && (
-      <>
-        <DialogHeader>
-          <DialogTitle>{selectedProduct.nama_product}</DialogTitle>
-          <DialogDescription>
-            {selectedProduct.description || "Tidak ada deskripsi tersedia."}
-          </DialogDescription>
-        </DialogHeader>
+      {/* 🔹 Modal Detail Produk */}
+      <Dialog open={!!selectedProduct} onOpenChange={() => setSelectedProduct(null)}>
+        <DialogContent className="w-[95%] sm:max-w-lg md:max-w-2xl max-h-[90vh] overflow-y-auto">
+          {selectedProduct && (
+            <>
+              <DialogHeader>
+                <DialogTitle>{selectedProduct.name}</DialogTitle>
+                <DialogDescription>
+                  {selectedProduct.description || "Tidak ada deskripsi tersedia."}
+                </DialogDescription>
+              </DialogHeader>
 
-        <div className="flex flex-col sm:flex-row gap-4">
-          <img
-            src={selectedProduct.image}
-            alt={selectedProduct.nama_product}
-            className="w-full sm:w-1/3 rounded-lg border object-cover"
-          />
-          <div className="flex-1 space-y-2">
-            <p><strong>Harga:</strong> Rp{selectedProduct.harga_per_unit.toLocaleString()}</p>
-            <p><strong>Stok:</strong> {selectedProduct?.stok && selectedProduct.stok > 0 ? selectedProduct.stok : "Habis"}</p>
-            <p><strong>Kategori:</strong> {selectedProduct.kategori}</p>
-            <p><strong>Kemasan:</strong> {selectedProduct.satuan}</p>
-            <p><strong>Kuantitas:</strong> {selectedProduct.berat}</p>
-            <p><strong>Berat:</strong> {selectedProduct.berat} gr</p>
-          </div>
-        </div>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <img
+                  src={selectedProduct.image}
+                  alt={selectedProduct.image_alt ?? selectedProduct.name}
+                  className="w-full sm:w-1/3 rounded-lg border object-cover"
+                />
+                <div className="flex-1 space-y-2">
+                  <p><strong>Harga:</strong> Rp{selectedProduct.price.toLocaleString()}</p>
+                  <p><strong>Kategori:</strong> {selectedProduct.category_id ?? "-"}</p>
+                  <p><strong>Brand:</strong> {selectedProduct.brand ?? "-"}</p>
+                  <p><strong>Kemasan:</strong> {selectedProduct.order_unit}</p>
+                  <p><strong>Isi per Kemasan:</strong> {selectedProduct.content}</p>
+                  <p><strong>Berat:</strong> {selectedProduct.weight} gr</p>
+                </div>
+              </div>
 
-        {/* 🔹 Tabs untuk Benefit & Dosage */}
-        <Tabs defaultValue="benefit" className="mt-4">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="benefit">Benefit</TabsTrigger>
-            <TabsTrigger value="dosage">Dosage</TabsTrigger>
-          </TabsList>
+              {/* 🔹 Tabs untuk Benefit & Dosage */}
+              <Tabs defaultValue="benefit" className="mt-4">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="benefit">Benefit</TabsTrigger>
+                  <TabsTrigger value="dosage">Dosage</TabsTrigger>
+                </TabsList>
 
-          <TabsContent value="benefit" className="mt-2 text-sm text-gray-700">
-            {selectedProduct.benefit && selectedProduct.benefit.length > 0 ? (
-              <ul className="list-disc pl-5 space-y-1">
-                {selectedProduct.benefit.map((item: string, idx: number) => (
-                  <li key={idx}>{item}</li>
-                ))}
-              </ul>
-            ) : (
-              "Belum ada informasi benefit."
-            )}
-          </TabsContent>
+                <TabsContent value="benefit" className="mt-2 text-sm text-gray-700">
+                  {selectedProduct.pharmacology ? (
+                    <p>{selectedProduct.pharmacology}</p>
+                  ) : (
+                    "Belum ada informasi benefit."
+                  )}
+                </TabsContent>
 
-          <TabsContent value="dosage" className="mt-2 text-sm text-gray-700">
-            <div className="space-y-1">
-              {(selectedProduct.dosage ?? "").split('. ').map((line: string, idx: number) => {
-                const formatted = line
-                  .replace(/Dewasa:/g, '<strong>Dewasa:</strong>')
-                  .replace(/Anak-anak:/g, '<strong>Anak-anak:</strong>');
-                return (
-                  <p
-                    key={idx}
-                    dangerouslySetInnerHTML={{
-                      __html: formatted + (line.endsWith('.') ? '' : '.'),
-                    }}
-                  />
-                );
-              })}
-            </div>
-          </TabsContent>
-        </Tabs>
-      </>
-    )}
-  </DialogContent>
-</Dialog>
+                <TabsContent value="dosage" className="mt-2 text-sm text-gray-700">
+                  {Array.isArray(selectedProduct.dosage) && selectedProduct.dosage.length > 0 ? (
+                    <ul className="list-disc pl-5 space-y-1">
+                      {selectedProduct.dosage.map((line: string, idx: number) => (
+                        <li key={idx}>{line}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    "Belum ada informasi dosis."
+                  )}
+                </TabsContent>
+              </Tabs>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </AppLayout>
   );
 }

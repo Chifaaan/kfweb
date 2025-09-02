@@ -107,14 +107,14 @@ export default function History() {
                       {p.image && (
                         <img
                           src={p.image}
-                          alt={p.nama_product}
+                          alt={p.name}
                           className="w-12 h-12 rounded object-cover"
                         />
                       )}
                       <div>
-                        <p className="font-medium">{p.nama_product}</p>
+                        <p className="font-medium">{p.name}</p>
                         <p className="text-xs text-gray-500">
-                          {p.sku} | Rp {p.harga_per_unit.toLocaleString()} / unit
+                          {p.sku} | Rp {p.price.toLocaleString()} / unit
                         </p>
                         <p className="text-xs text-gray-500">Qty: {p.pivot?.quantity}</p>
                       </div>
