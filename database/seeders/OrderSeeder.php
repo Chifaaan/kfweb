@@ -14,7 +14,7 @@ class OrderSeeder extends Seeder
             [
                 'id_transaksi'    => 'TRX-' . Str::random(8),
                 'id_koperasi'     => 'KOP-001',
-                'status'          => 'pending',
+                'status'          => 'arrived',
                 'merchant_id'     => 'M-1001',
                 'merchant_name'   => 'Toko Sembako Jaya',
                 'total_nominal'   => 150000.00,
@@ -32,7 +32,7 @@ class OrderSeeder extends Seeder
             [
                 'id_transaksi'    => 'TRX-' . Str::random(8),
                 'id_koperasi'     => 'KOP-002',
-                'status'          => 'success',
+                'status'          => 'On Delivery',
                 'merchant_id'     => 'M-1002',
                 'merchant_name'   => 'Warung Bu Tini',
                 'total_nominal'   => 250000.00,
@@ -40,8 +40,8 @@ class OrderSeeder extends Seeder
                 'is_for_sale'     => true,
                 'account_no'      => '2233445566',
                 'account_bank'    => 'Mandiri',
-                'payment_type'    => 'qris',
-                'payment_method'  => 'QR Code',
+                'payment_type'    => 'CAD',
+                'payment_method'  => 'VA',
                 'va_number'       => null,
                 'timestamp'       => now(),
                 'created_at'      => now(),
