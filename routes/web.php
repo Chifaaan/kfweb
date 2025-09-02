@@ -21,6 +21,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('pemesanan/history', [PemesananController::class , 'history'])->name('history');
     Route::get('penerimaan', [PenerimaanController::class , 'index'])->name('penerimaan');
     Route::get('penerimaan/history', [PenerimaanController::class , 'create'])->name('penerimaan.history');
+    // detail
+    Route::get('pemesanan/history/{id_transaksi}', [PemesananController::class, 'show'])->name('history.show');
+
+    // update status (POST)
+    Route::post('pemesanan/history/{id_transaksi}/status', [PemesananController::class, 'updateStatus'])->name('history.updateStatus');
     // Route::get('pemesanan/po', [PurchaseOrderController::class, 'create'])->name('po.create');
     // Route::post('pemesanan/po', [PurchaseOrderController::class, 'store'])->name('po.store');
 });

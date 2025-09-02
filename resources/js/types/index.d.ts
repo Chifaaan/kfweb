@@ -28,6 +28,25 @@ export type NavSection = {
   isActive?: boolean;
 }
 
+export type ProductPivot = {
+  id: number;
+  sku: string;
+  nama_product: string;
+  harga_per_unit: number;
+  image?: string;
+  pivot?: { quantity: number };
+};
+
+export type BuyerAddress = {
+  recipient_name: string;
+  address_line1: string;
+  address_line2?: string;
+  city: string;
+  province: string;
+  postal_code: string;
+  country: string;
+  phone?: string;
+};
 
 export interface SharedData {
   name: string;

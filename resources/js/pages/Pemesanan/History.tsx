@@ -1,5 +1,5 @@
 import AppLayout from '@/layouts/app-layout';
-import { Head, usePage } from '@inertiajs/react';
+import { Head, usePage, Link } from '@inertiajs/react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -136,7 +136,9 @@ export default function History() {
                       <span>{order.payment_method}</span>
                     </div>
                   </div>
-                  <Button size="sm">Details</Button>
+                  <Link href={route('history.show', order.id_transaksi)}>
+                    <Button size="sm">Details</Button>
+                  </Link>
                 </div>
               </div>
             );

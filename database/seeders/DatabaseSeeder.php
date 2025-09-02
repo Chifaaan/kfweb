@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Product;
 use App\Models\User;
+use App\Models\BuyerAddress;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -23,7 +24,8 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call([
-            ProductSeeder::class
+            ProductSeeder::class,
+            BuyerAddressSeeder::class
         ]);
     }
 }

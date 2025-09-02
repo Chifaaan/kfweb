@@ -39,4 +39,29 @@ class PemesananController extends Controller
         ]);
     }
 
+    // new: show detail
+    public function show($id_transaksi)
+    {
+        $order = Order::with([
+            'products' => function ($q) {
+                $q->select('products.id', 'sku', 'nama_product', 'harga_per_unit', 'image')
+                  ->withPivot('quantity');
+            },
+            'buyerAddress'
+        ])->where('id_transaksi', $id_transaksi)->firstOrFail();
+
+        // timeline array (urutan)
+        $timeline = [
+            ['key' => 'made', 'label' => 'Order Made', 'time' => $order->created_at],
+            ['key' => 'paid', 'label' => 'Order Paid', 'time' => $order->paid_at],
+            ['key' => 'shipped', 'label' => 'Shipped', 'time' => $order->shipped_at],
+            ['key' => 'received', 'label' => 'Received', 'time' => $order->received_at],
+        ];
+
+        return Inertia::render('Pemesanan/Detail', [
+            'order' => $order,
+            'timeline' => $timeline,
+        ]);
+    }
+
 }
