@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import AppLayout from "@/layouts/app-layout";
 import { Head, router } from "@inertiajs/react";
-import { type BreadcrumbItem, CartItem, Order } from "@/types";
+import { type BreadcrumbItem, CartItem, OrderPayload, Order } from "@/types";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -59,7 +59,7 @@ const handleSubmit = () => {
 
   const isKredit = paymentMethod === "Kredit";
 
-  const order: Order = {
+  const order: OrderPayload = {
     id_transaksi: `TRX-${Date.now()}`,
     id_koperasi: koperasiInfo.koperasi_id,
     status: "Process",
@@ -80,7 +80,7 @@ const handleSubmit = () => {
     })),
   };
 
-  router.post(route("po.store"), {...order}, {
+  router.post(route("po.store"), order as any, {
     onSuccess: () => {
       localStorage.removeItem("cart");
       setCartItems([]);

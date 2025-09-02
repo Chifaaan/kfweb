@@ -20,7 +20,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('pemesanan/po', [PurchaseOrderController::class, 'store'])->name('po.store');
     Route::get('pemesanan/history', [PemesananController::class , 'history'])->name('history');
     Route::get('penerimaan', [PenerimaanController::class , 'index'])->name('penerimaan');
-    Route::get('penerimaan/history', [PenerimaanController::class , 'create'])->name('history');
+    Route::get('penerimaan/history', [PenerimaanController::class , 'create'])->name('penerimaan.history');
     // Route::get('pemesanan/po', [PurchaseOrderController::class, 'create'])->name('po.create');
     // Route::post('pemesanan/po', [PurchaseOrderController::class, 'store'])->name('po.store');
 });
