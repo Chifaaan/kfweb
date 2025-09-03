@@ -89,7 +89,7 @@ export interface Product {
   brand?: string;
   image?: string;
   description?: string;
-  dosage?: string[]; 
+  dosage?: string[];
   pharmacology?: string;
   image_alt?: string;
   is_active?: boolean;
@@ -114,7 +114,7 @@ export interface Order {
   payment_method: string;
   va_number: string;
   timestamp: string;
-  products?: (Product & { pivot?: { quantity: number } })[]; 
+  products?: (Product & { pivot?: { quantity: number } })[];
     product_detail: {
     sku: string;
     quantity: number;

@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
+import PropTypes from 'prop-types'; // Import PropTypes
 
-export default function Filters({ onFilterChange }) {
+export default function Filters({ onFilterChange, categories: propCategories, packages: propPackages, orderUnits: propOrderUnits }) {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedPackages, setSelectedPackages] = useState([]);
   const [selectedOrderUnits, setSelectedOrderUnits] = useState([]);
 
-  const categories = ["Obat", "Vitamin & Suplemen", "Antibiotik"];
-  const packages = ["PCS", "BOTOL", "Tablet", "STRIP"];
-  // ini sebaiknya didapat dari API products, tapi sementara hardcode
-  const orderUnits = ["BOX", "DUS"];
+  // Use the props directly for the filter options
+  const categories = propCategories;
+  const packages = propPackages;
+  const orderUnits = propOrderUnits;
 
   // toggle category
   const toggleCategory = (cat) => {
@@ -51,7 +52,7 @@ export default function Filters({ onFilterChange }) {
       packages: selectedPackages,
       orderUnits: selectedOrderUnits,
     });
-  }, [selectedCategories, selectedPackages, selectedOrderUnits]);
+  }, [selectedCategories, selectedPackages, selectedOrderUnits, onFilterChange]); // Add onFilterChange to dependency array
 
   return (
     <div className="lg:w-64 w-full p-4 border rounded-lg shadow-sm bg-card text-card-foreground">
@@ -134,3 +135,11 @@ export default function Filters({ onFilterChange }) {
     </div>
   );
 }
+
+// Add PropTypes for better type checking and documentation
+Filters.propTypes = {
+  onFilterChange: PropTypes.func.isRequired,
+  categories: PropTypes.arrayOf(PropTypes.string).isRequired,
+  packages: PropTypes.arrayOf(PropTypes.string).isRequired,
+  orderUnits: PropTypes.arrayOf(PropTypes.string).isRequired,
+};

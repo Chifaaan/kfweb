@@ -21,6 +21,7 @@ interface Props {
   products: Product[];
   categories: string[];
   packages: string[];
+  orderUnits: string[]; // Add orderUnits to Props
 }
 
 interface FilterState {
@@ -29,7 +30,7 @@ interface FilterState {
   orderUnits: string[];
 }
 
-export default function Index({ products, categories, packages }: Props) {
+export default function Index({ products, categories, packages, orderUnits }: Props) {
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("name-asc");
   const [filters, setFilters] = useState<FilterState>({
@@ -112,7 +113,7 @@ export default function Index({ products, categories, packages }: Props) {
       <div className="flex flex-col lg:flex-row gap-8 px-4 sm:px-6 lg:px-8 py-6">
         {/* Sidebar Filters */}
         <div className="lg:w-1/4 w-full">
-          <Filters onFilterChange={setFilters} />
+          <Filters onFilterChange={setFilters} categories={categories} packages={packages} orderUnits={orderUnits} />
         </div>
 
         {/* Product Section */}
@@ -197,7 +198,7 @@ export default function Index({ products, categories, packages }: Props) {
                 />
                 <div className="flex-1 space-y-2">
                   <p><strong>Harga:</strong> Rp{selectedProduct.price.toLocaleString()}</p>
-                  <p><strong>Kategori:</strong> {selectedProduct.category_id ?? "-"}</p>
+                  <p><strong>Kategori:</strong> {selectedProduct.category?.main_category ?? "-"}</p>
                   <p><strong>Brand:</strong> {selectedProduct.brand ?? "-"}</p>
                   <p><strong>Kemasan:</strong> {selectedProduct.order_unit}</p>
                   <p><strong>Isi per Kemasan:</strong> {selectedProduct.content}</p>

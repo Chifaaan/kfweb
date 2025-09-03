@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Product;
 use App\Models\Order;
+use App\Models\Category;
 
 class PemesananController extends Controller
 {
@@ -15,14 +16,16 @@ class PemesananController extends Controller
         $products = Product::with('category:id,main_category')
             ->get(['id', 'sku', 'name', 'price', 'image', 'category_id', 'order_unit', 'is_active', 'content', 'base_uom', 'weight', 'pharmacology', 'dosage', 'description']);
         
-        $categories = $products->pluck('category.main_category')->filter()->unique()->values();
-        $packages = $products->pluck('base_uom')->filter()->unique()->values();
+        $categories = Category::pluck('main_category')->unique()->values();
+        $packages = Product::pluck('base_uom')->filter()->unique()->values();
+        $orderUnits = Product::pluck('order_unit')->filter()->unique()->values();
     
 
         return Inertia::render('Pemesanan/Index', [
             'products' => $products,
             'categories' => $categories,
             'packages' => $packages,
+            'orderUnits' => $orderUnits,
         ]);
     }
 

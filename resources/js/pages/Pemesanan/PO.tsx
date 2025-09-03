@@ -9,6 +9,13 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+// Import Tooltip components
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const breadcrumbs: BreadcrumbItem[] = [
   { title: "Medicines", href: "/pemesanan/medicines" },
@@ -32,6 +39,7 @@ export default function PurchaseOrderPage() {
   const [remainingCredit, setRemainingCredit] = useState(1_000_000);
   const [status, setStatus] = useState("Pending");
   const [showDialog, setShowDialog] = useState<"cancel" | "submit" | null>(null);
+  const [validationErrors, setValidationErrors] = useState<{ [key: string]: string }>({});
 
   // Cart Items
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
@@ -54,48 +62,96 @@ export default function PurchaseOrderPage() {
       ? "Pembayaran menggunakan Kredit Koperasi"
       : `Pembayaran menggunakan Bank Virtual Account ${accountBank || "-"} (VA ${vaNumber || "-"})`;
 
-const handleSubmit = () => {
-  if (isCreditNotEnough) return;
+  // Reset VA fields when changing to Kredit Koperasi
+  useEffect(() => {
+    if (paymentMethod === "Kredit") {
+      setVaNumber("");
+      setAccountBank("");
+      setAccountNo("");
+      setValidationErrors({}); // Clear validation errors when switching
+    }
+  }, [paymentMethod]);
 
-  const isKredit = paymentMethod === "Kredit";
-
-  const order: OrderPayload = {
-    id_transaksi: `TRX-${Date.now()}`,
-    id_koperasi: koperasiInfo.koperasi_id,
-    status: "Process",
-    merchant_id: koperasiInfo.merchant_id,
-    merchant_name: koperasiInfo.merchant_name,
-    total_nominal: total,
-    remaining_credit: isKredit ? remainingCredit - total : remainingCredit,
-    is_for_sale: false,
-    account_no: isKredit ? "" : accountNo,
-    account_bank: isKredit ? "" : accountBank,
-    payment_type: isKredit ? "CAD" : "Virtual Account",
-    payment_method: paymentMethod,
-    va_number: isKredit ? "" : vaNumber,
-    timestamp: new Date().toISOString().slice(0, 19).replace("T", " "),
-    product_detail: cartItems.map((item) => ({
-      sku: item.sku,
-      quantity: item.quantity,
-    })),
+  const validateVAFields = () => {
+    const errors: { [key: string]: string } = {};
+    if (paymentMethod === "VA") {
+      if (!vaNumber.trim()) {
+        errors.vaNumber = "VA Number is required.";
+      }
+      if (!accountBank.trim()) {
+        errors.accountBank = "Bank is required.";
+      }
+      if (!accountNo.trim()) {
+        errors.accountNo = "Account Number is required.";
+      }
+    }
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
-  router.post(route("po.store"), order as any, {
-    onSuccess: () => {
-      localStorage.removeItem("cart");
-      setCartItems([]);
-    },
-  });
-  console.log("Order submitted:", order);
-  setShowDialog(null);
-};
+  const handleSubmit = () => {
+    if (isCreditNotEnough) {
+      setShowDialog(null); // Close the submit dialog if credit is not enough
+      return;
+    }
+
+    if (paymentMethod === "VA" && !validateVAFields()) {
+      setShowDialog(null); // Close the submit dialog if validation fails
+      return;
+    }
+
+    const isKredit = paymentMethod === "Kredit";
+
+    const order: OrderPayload = {
+      id_transaksi: `TRX-${Date.now()}`,
+      id_koperasi: koperasiInfo.koperasi_id,
+      status: "Process",
+      merchant_id: koperasiInfo.merchant_id,
+      merchant_name: koperasiInfo.merchant_name,
+      total_nominal: total,
+      remaining_credit: isKredit ? remainingCredit - total : remainingCredit,
+      is_for_sale: false,
+      account_no: isKredit ? "" : accountNo,
+      account_bank: isKredit ? "" : accountBank,
+      payment_type: isKredit ? "CAD" : "Virtual Account",
+      payment_method: paymentMethod,
+      va_number: isKredit ? "" : vaNumber,
+      timestamp: new Date().toISOString().slice(0, 19).replace("T", " "),
+      product_detail: cartItems.map((item) => ({
+        sku: item.sku,
+        quantity: item.quantity,
+      })),
+    };
+
+    router.post(route("po.store"), order as any, {
+      onSuccess: () => {
+        localStorage.removeItem("cart");
+        setCartItems([]);
+      },
+    });
+    console.log("Order submitted:", order);
+    setShowDialog(null);
+  };
+
+  const areVaFieldsEmpty = paymentMethod === "VA" && (!vaNumber.trim() || !accountBank.trim() || !accountNo.trim());
+  const isSubmitDisabled = isCreditNotEnough || areVaFieldsEmpty;
+
+  const getTooltipContent = () => {
+    if (isCreditNotEnough) {
+      return "Saldo Kredit Anda Tidak Cukup untuk pesanan ini.";
+    }
+    if (areVaFieldsEmpty) {
+      return "Harap lengkapi detail Virtual Account untuk melanjutkan.";
+    }
+    return ""; // Should not be reached if button is enabled
+  };
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="Purchase Order" />
 
       <div className="p-4 md:p-6 space-y-6">
-      
+
         <h1 className="text-2xl font-bold text-blue-800">Purchase Order Form</h1>
         <p className="mb-4 text-sm text-muted-foreground">Transaction ID:TRX-${Date.now()} | Status: {status}</p>
 
@@ -154,28 +210,49 @@ const handleSubmit = () => {
                 {paymentMethod === "VA" && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                     <div>
-                      <Label>VA Number</Label>
+                      <Label htmlFor="vaNumber">VA Number</Label>
                       <Input
+                        id="vaNumber"
                         value={vaNumber}
-                        onChange={(e) => setVaNumber(e.target.value)}
+                        onChange={(e) => {
+                          setVaNumber(e.target.value);
+                          setValidationErrors((prev) => ({ ...prev, vaNumber: "" }));
+                        }}
                         placeholder="1234567890"
                       />
+                      {validationErrors.vaNumber && (
+                        <p className="text-red-500 text-sm mt-1">{validationErrors.vaNumber}</p>
+                      )}
                     </div>
                     <div>
-                      <Label>Bank</Label>
+                      <Label htmlFor="accountBank">Bank</Label>
                       <Input
+                        id="accountBank"
                         value={accountBank}
-                        onChange={(e) => setAccountBank(e.target.value)}
+                        onChange={(e) => {
+                          setAccountBank(e.target.value);
+                          setValidationErrors((prev) => ({ ...prev, accountBank: "" }));
+                        }}
                         placeholder="BCA / Mandiri"
                       />
+                      {validationErrors.accountBank && (
+                        <p className="text-red-500 text-sm mt-1">{validationErrors.accountBank}</p>
+                      )}
                     </div>
                     <div>
-                      <Label>Account Number</Label>
+                      <Label htmlFor="accountNo">Account Number</Label>
                       <Input
+                        id="accountNo"
                         value={accountNo}
-                        onChange={(e) => setAccountNo(e.target.value)}
+                        onChange={(e) => {
+                          setAccountNo(e.target.value);
+                          setValidationErrors((prev) => ({ ...prev, accountNo: "" }));
+                        }}
                         placeholder="9876543210"
                       />
+                      {validationErrors.accountNo && (
+                        <p className="text-red-500 text-sm mt-1">{validationErrors.accountNo}</p>
+                      )}
                     </div>
                   </div>
                 )}
@@ -278,9 +355,24 @@ const handleSubmit = () => {
           <Button variant="outline" onClick={() => setShowDialog("cancel")}>
             Cancel
           </Button>
-          <Button onClick={() => setShowDialog("submit")} disabled={isCreditNotEnough}>
-            Submit Purchase Order
-          </Button>
+
+          {/* Tooltip for Submit Button */}
+          <TooltipProvider>
+            <Tooltip delayDuration={200}>
+              <TooltipTrigger asChild>
+                <span>
+                  <Button onClick={() => setShowDialog("submit")} disabled={isSubmitDisabled}>
+                    Submit Purchase Order
+                  </Button>
+                </span>
+              </TooltipTrigger>
+              {isSubmitDisabled && (
+                <TooltipContent>
+                  <p>{getTooltipContent()}</p>
+                </TooltipContent>
+              )}
+            </Tooltip>
+          </TooltipProvider>
         </div>
       </div>
 
@@ -306,7 +398,7 @@ const handleSubmit = () => {
                 Ya, Batalkan
               </Button>
             ) : (
-              <Button onClick={handleSubmit} disabled={isCreditNotEnough}>
+              <Button onClick={handleSubmit} disabled={isSubmitDisabled}>
                 Ya, Simpan
               </Button>
             )}
