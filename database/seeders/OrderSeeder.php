@@ -14,7 +14,7 @@ class OrderSeeder extends Seeder
             [
                 'id_transaksi'    => 'TRX-' . Str::random(8),
                 'id_koperasi'     => 'KOP-001',
-                'status'          => 'arrived',
+                'status'          => 'Arrived',
                 'merchant_id'     => 'M-1001',
                 'merchant_name'   => 'Toko Sembako Jaya',
                 'total_nominal'   => 150000.00,

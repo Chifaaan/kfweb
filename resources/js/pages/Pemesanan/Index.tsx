@@ -19,11 +19,24 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 interface Props {
   products: Product[];
+  categories: string[];
+  packages: string[];
 }
-export default function Index({ products }: Props) {
+
+interface FilterState {
+  categories: string[];
+  packages: string[];
+  orderUnits: string[];
+}
+
+export default function Index({ products, categories, packages }: Props) {
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("name-asc");
-  const [filters, setFilters] = useState({ categories: ["Semua Produk"], packages: ["Semua Package"] });
+  const [filters, setFilters] = useState<FilterState>({
+    categories: [],
+    packages: [],
+    orderUnits: []
+  });
   const [cart, setCart] = useState<CartItem[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
@@ -65,17 +78,20 @@ export default function Index({ products }: Props) {
   // ambil filter aktif
   const activeCategories = filters.categories.filter((c) => c !== "Semua Produk");
   const activePackages = filters.packages.filter((p) => p !== "Semua Package");
-
+  const activeOrderUnits = filters.orderUnits.filter((u) => u !== "Semua Unit");
   // 🔹 filter kategori & package
-  if (!(activeCategories.length === 0 && activePackages.length === 0)) {
+  if (!(activeCategories.length === 0 && activePackages.length === 0 && activeOrderUnits.length === 0)) {
     filteredProducts = filteredProducts.filter((p) => {
       const matchCategory =
-        activeCategories.length === 0 || activeCategories.includes(String(p.category_id));
+        activeCategories.length === 0 || activeCategories.includes(String(p.category?.main_category));
 
       const matchPackage =
-        activePackages.length === 0 || activePackages.includes(p.order_unit);
+        activePackages.length === 0 || activePackages.includes(p.base_uom);
 
-      return matchCategory && matchPackage;
+      const matchOrderUnit =
+        activeOrderUnits.length === 0 || activeOrderUnits.includes(p.order_unit);
+
+      return matchCategory && matchPackage && matchOrderUnit;
     });
   }
 
@@ -93,7 +109,7 @@ export default function Index({ products }: Props) {
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="Medicines" />
-      <div className="flex flex-col lg:flex-row gap-6 p-6">
+      <div className="flex flex-col lg:flex-row gap-8 px-4 sm:px-6 lg:px-8 py-6">
         {/* Sidebar Filters */}
         <div className="lg:w-1/4 w-full">
           <Filters onFilterChange={setFilters} />

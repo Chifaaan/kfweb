@@ -3,9 +3,12 @@ import React, { useState, useEffect } from "react";
 export default function Filters({ onFilterChange }) {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedPackages, setSelectedPackages] = useState([]);
+  const [selectedOrderUnits, setSelectedOrderUnits] = useState([]);
 
-  const categories = ["Obat", "Vitamin", "Antibiotik"];
-  const packages = ["PCS", "BOTOL", "BOX"];
+  const categories = ["Obat", "Vitamin & Suplemen", "Antibiotik"];
+  const packages = ["PCS", "BOTOL", "Tablet", "STRIP"];
+  // ini sebaiknya didapat dari API products, tapi sementara hardcode
+  const orderUnits = ["BOX", "DUS"];
 
   // toggle category
   const toggleCategory = (cat) => {
@@ -25,10 +28,20 @@ export default function Filters({ onFilterChange }) {
     }
   };
 
+  // toggle orderUnit
+  const toggleOrderUnit = (unit) => {
+    if (selectedOrderUnits.includes(unit)) {
+      setSelectedOrderUnits(selectedOrderUnits.filter((u) => u !== unit));
+    } else {
+      setSelectedOrderUnits([...selectedOrderUnits, unit]);
+    }
+  };
+
   // clear all filters
   const clearAllFilters = () => {
     setSelectedCategories([]);
     setSelectedPackages([]);
+    setSelectedOrderUnits([]);
   };
 
   // kirim ke parent setiap kali filter berubah
@@ -36,8 +49,9 @@ export default function Filters({ onFilterChange }) {
     onFilterChange({
       categories: selectedCategories,
       packages: selectedPackages,
+      orderUnits: selectedOrderUnits,
     });
-  }, [selectedCategories, selectedPackages]);
+  }, [selectedCategories, selectedPackages, selectedOrderUnits]);
 
   return (
     <div className="lg:w-64 w-full p-4 border rounded-lg shadow-sm bg-card text-card-foreground">
@@ -83,6 +97,25 @@ export default function Filters({ onFilterChange }) {
                   onChange={() => togglePackage(pack)}
                 />
                 {pack}
+              </label>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Order Units */}
+      <div className="mb-4">
+        <h3 className="font-semibold mb-2">Order Units</h3>
+        <ul className="space-y-1">
+          {orderUnits.map((unit) => (
+            <li key={unit}>
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={selectedOrderUnits.includes(unit)}
+                  onChange={() => toggleOrderUnit(unit)}
+                />
+                {unit}
               </label>
             </li>
           ))}

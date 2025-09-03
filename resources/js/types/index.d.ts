@@ -94,6 +94,9 @@ export interface Product {
   image_alt?: string;
   is_active?: boolean;
   is_featured?: boolean;
+  category?: {
+    main_category: string;
+  };
 }
 
 export interface Order {
@@ -139,6 +142,16 @@ export interface OrderPayload {
   }[];
 }
 
+export interface FiltersProps {
+  categories: string[];
+  packages: string[];
+  orderUnits: string[];
+  onFilterChange: (filters: {
+    categories: string[];
+    packages: string[];
+    orderUnits: string[];
+  }) => void;
+}
 export interface Penerimaan {
   id: number;
   nomorSuratPemesanan: string;

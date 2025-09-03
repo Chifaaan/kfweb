@@ -14,10 +14,15 @@ class PemesananController extends Controller
         // Ambil semua produk dengan kategori (hanya id & main_category biar ringan)
         $products = Product::with('category:id,main_category')
             ->get(['id', 'sku', 'name', 'price', 'image', 'category_id', 'order_unit', 'is_active', 'content', 'base_uom', 'weight', 'pharmacology', 'dosage', 'description']);
+        
+        $categories = $products->pluck('category.main_category')->filter()->unique()->values();
+        $packages = $products->pluck('base_uom')->filter()->unique()->values();
     
 
         return Inertia::render('Pemesanan/Index', [
-            'products' => $products
+            'products' => $products,
+            'categories' => $categories,
+            'packages' => $packages,
         ]);
     }
 
