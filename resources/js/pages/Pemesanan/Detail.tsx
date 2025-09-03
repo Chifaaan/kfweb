@@ -39,7 +39,7 @@ export default function Detail() {
   const stepIndexByStatus: Record<string, number> = {
   made: 0,
   'On Delivery': 1,
-  arrived: 2,
+  'Arrived': 2,
   received: 3,
 };
 const activeIndex = stepIndexByStatus[order.status] ?? 0;
@@ -58,13 +58,13 @@ const activeIndex = stepIndexByStatus[order.status] ?? 0;
                   <p className="text-sm text-muted-foreground">Placed: {formatTime(order.created_at)}</p>
                 </div>
                 <div className="flex items-center gap-2">
-                    {order.status === 'arrived' && (
-  <div>
-    <Button size="sm" className="bg-green-600 text-white hover:bg-green-700">
-      Paket Sudah Diterima
-    </Button>
-  </div>
-)}
+                    {order.status === 'Arrived' && (
+                      <div>
+                        <Button size="sm" className="bg-green-600 text-white hover:bg-green-700">
+                          Paket Sudah Diterima
+                        </Button>
+                      </div>
+                    )}
                   <Button size="sm">Send Invoice</Button>
                   <Link href="/pemesanan/history">
                     <Button size="sm" variant="outline">

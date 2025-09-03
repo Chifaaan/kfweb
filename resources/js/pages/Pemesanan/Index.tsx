@@ -11,10 +11,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const breadcrumbs: BreadcrumbItem[] = [
-  {
-    title: 'Medicines',
-    href: '/pemesanan/medicines',
-  },
+  { title: 'Dashboard', href: '/dashboard' },
+  { title: 'Medicines', href: '/pemesanan/medicines'},
 ];
 
 interface Props {
