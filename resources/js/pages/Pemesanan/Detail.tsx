@@ -1,5 +1,5 @@
 import React from 'react';
-import { Head, usePage, Link } from '@inertiajs/react';
+import { Head, usePage, Link, router } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -39,7 +39,7 @@ export default function Detail() {
     made: 0,
     'On Delivery': 1,
     'Arrived': 2,
-    received: 3,
+    'Received': 3,
   };
   const activeIndex = stepIndexByStatus[order.status] ?? 0;
 
@@ -218,9 +218,16 @@ export default function Detail() {
                     Harap Konfirmasi bahwa paket sudah Anda terima
                   </p>
                   <div className="flex flex-col sm:flex-row gap-2"> {/* Buttons stack on mobile */}
-                      <Button className="bg-green-600 text-white hover:bg-green-700 w-full sm:w-auto">
-                        Paket Sudah Diterima
-                      </Button>
+                  <Button
+                    onClick={() => {
+                      router.post(route('history.updateStatus', { id_transaksi: order.id_transaksi }), {
+                        status: 'Received',
+                      })
+                    }}
+                    className="bg-green-600 text-white hover:bg-green-700 w-full sm:w-auto"
+                  >
+                    Paket Sudah Diterima
+                  </Button>
                     <Button variant="destructive" className="w-full sm:flex-1"> {/* Flex-1 on desktop, full width on mobile */}
                       Laporkan
                     </Button>

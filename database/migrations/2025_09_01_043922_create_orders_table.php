@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('va_number')->nullable();
             $table->timestamp('timestamp');
             $table->timestamps();
+            $table->timestamp('received_at')->nullable();
         });
     }
 

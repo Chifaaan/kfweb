@@ -67,7 +67,7 @@ class PemesananController extends Controller
             ['key' => 'made', 'label' => 'Order Made', 'time' => $order->created_at],
             ['key' => 'On Delivery', 'label' => 'On Delivery', 'time' => $order->delivered_at],
             ['key' => 'Arrived', 'label' => 'Arrived', 'time' => $order->arrived_at],
-            ['key' => 'received', 'label' => 'Received', 'time' => $order->received_at],
+            ['key' => 'Received', 'label' => 'Received', 'time' => $order->received_at],
         ];
 
         return Inertia::render('Pemesanan/Detail', [
@@ -75,4 +75,33 @@ class PemesananController extends Controller
             'timeline'=> $timeline,
         ]);
     }
+public function updateStatus(Request $request, $id_transaksi)
+{
+    $request->validate([
+        'status' => 'required|in:made,On Delivery,Arrived,Received',
+    ]);
+
+    $order = Order::where('id_transaksi', $id_transaksi)->firstOrFail();
+
+    switch ($request->status) {
+
+        case 'Arrived':
+            // kalau ditekan "Arrived", langsung ubah jadi "received"
+            $order->status = 'Received';
+            $order->received_at = now();
+            break;
+
+        case 'Received':
+            $order->status = 'Received';
+            $order->received_at = now();
+            break;
+    }
+
+    $order->save();
+
+    return redirect()
+        ->route('history.show', ['id_transaksi' => $id_transaksi])
+        ->with('success', 'Order status updated successfully.');
+}
+
 }
