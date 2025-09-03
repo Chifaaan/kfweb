@@ -15,7 +15,6 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 type TimelineItem = { key: string; label: string; time: string | null };
 
-
 export default function Detail() {
   const { props } = usePage<{ order: any; timeline: TimelineItem[] }>();
   const order = props.order;
@@ -37,45 +36,38 @@ export default function Detail() {
   }, 0) ?? 0;
 
   const stepIndexByStatus: Record<string, number> = {
-  made: 0,
-  'On Delivery': 1,
-  'Arrived': 2,
-  received: 3,
-};
-const activeIndex = stepIndexByStatus[order.status] ?? 0;
+    made: 0,
+    'On Delivery': 1,
+    'Arrived': 2,
+    received: 3,
+  };
+  const activeIndex = stepIndexByStatus[order.status] ?? 0;
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title={`Order ID : ${order.id_transaksi}`} />
-      <div className="max-w-7xl mx-auto p-4">
-        <div className="flex items-start justify-between gap-6">
-          <div className="flex-1 space-y-6">
+      <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8"> {/* Adjusted padding for different screen sizes */}
+        {/* Changed from flex to flex-col on mobile, then flex-row on medium screens and up */}
+        <div className="flex flex-col md:flex-row items-start justify-between gap-6">
+          <div className="flex-1 space-y-6 w-full md:w-auto"> {/* Ensure main content takes full width on mobile */}
             {/* Header + Steps */}
             <Card className="p-4">
-              <div className="flex items-start justify-between">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-6"> {/* Stack buttons/title on small screens */}
                 <div>
                   <h3 className="text-xl font-semibold">Order ID : {order.id_transaksi}</h3>
                   <p className="text-sm text-muted-foreground">Placed: {formatTime(order.created_at)}</p>
                 </div>
-                <div className="flex items-center gap-2">
-                    {order.status === 'Arrived' && (
-                      <div>
-                        <Button size="sm" className="bg-green-600 text-white hover:bg-green-700">
-                          Paket Sudah Diterima
-                        </Button>
-                      </div>
-                    )}
-                  <Button size="sm">Send Invoice</Button>
-                  <Link href="/pemesanan/history">
-                    <Button size="sm" variant="outline">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 mt-2 sm:mt-0 w-full sm:w-auto"> {/* Buttons stack on mobile, then row */}
+                  <Button size="sm" className="w-full sm:w-auto">Send Invoice</Button>
+                  <Link href="/pemesanan/history" className="w-full sm:w-auto">
+                    <Button size="sm" variant="outline" className="w-full sm:w-auto">
                       <ArrowLeft className="w-4 h-4 mr-1" /> Back
                     </Button>
                   </Link>
                 </div>
               </div>
 
-              <div className="mt-4 flex flex-wrap gap-4 items-center">
-                {/* Steps visual */}
+              <div className="mt-4 grid grid-cols-2 sm:flex sm:flex-wrap gap-4 items-center justify-between"> {/* Use grid for steps on small screens, flex for larger */}
                 {[
                   { key: 'made', label: 'Order Made', icon: <Package size={16} /> },
                   { key: 'delivery', label: 'On Delivery', icon: <Truck size={16} /> },
@@ -84,27 +76,31 @@ const activeIndex = stepIndexByStatus[order.status] ?? 0;
                 ].map((st, idx) => {
                   const done = idx <= activeIndex;
                   return (
-                    <div key={st.key} className="flex items-center gap-2">
-                      <div
-                        className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                          done ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-600'
-                        }`}
-                      >
-                        {st.icon}
+                    <React.Fragment key={st.key}>
+                      <div className="flex items-center gap-2">
+                        <div
+                          className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                            done ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-600'
+                          }`}
+                        >
+                          {st.icon}
+                        </div>
+                        <div className="text-sm">
+                          <div className={`${done ? 'font-semibold' : 'text-muted-foreground'}`}>{st.label}</div>
+                          <div className="text-xs">{formatTime(timeline[idx]?.time)}</div>
+                        </div>
                       </div>
-                      <div className="text-sm">
-                        <div className={`${done ? 'font-semibold' : 'text-muted-foreground'}`}>{st.label}</div>
-                        <div className="text-xs">{formatTime(timeline[idx]?.time)}</div>
-                      </div>
-                      {idx < 3 && <ArrowRight className="ml-3 text-gray-300" />}
-                    </div>
+                      {/* Show arrow only on medium screens and up, and if not the last step */}
+                      {idx < 3 && <ArrowRight className="hidden sm:block text-gray-300 mx-1" />}
+                      {/* For smaller screens, an implicit break or vertical separation can occur */}
+                    </React.Fragment>
                   );
                 })}
               </div>
             </Card>
-            
 
             {/* Shipping Address + Payment Info */}
+            {/* Already responsive with grid-cols-1 md:grid-cols-2 */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Card>
                 <CardHeader>
@@ -185,8 +181,9 @@ const activeIndex = stepIndexByStatus[order.status] ?? 0;
             </Card>
           </div>
 
-          {/* Right sidebar: Order Summary */}
-          <aside className="w-96 space-y-4">
+          {/* Right sidebar: Order Summary - now responsive */}
+          {/* w-full on mobile, then w-96 on medium screens and up */}
+          <aside className="w-full md:w-96 space-y-4 mt-6 md:mt-0"> {/* Added margin-top for mobile */}
             <Card>
               <CardHeader>
                 <CardTitle>Order Summary</CardTitle>
@@ -209,6 +206,28 @@ const activeIndex = stepIndexByStatus[order.status] ?? 0;
                 </div>
               </CardContent>
             </Card>
+
+            {/* Card Konfirmasi Paket */}
+            {order.status === "Arrived" && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>PAKET SUDAH TIBA</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <p className="text-sm text-muted-foreground">
+                    Harap Konfirmasi bahwa paket sudah Anda terima
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-2"> {/* Buttons stack on mobile */}
+                      <Button className="bg-green-600 text-white hover:bg-green-700 w-full sm:w-auto">
+                        Paket Sudah Diterima
+                      </Button>
+                    <Button variant="destructive" className="w-full sm:flex-1"> {/* Flex-1 on desktop, full width on mobile */}
+                      Laporkan
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </aside>
         </div>
       </div>

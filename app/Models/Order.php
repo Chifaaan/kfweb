@@ -26,6 +26,7 @@ class Order extends Model
         'timestamp',
         'paid_at',
         'shipped_at',
+        'arrived_at',
         'received_at',
     ];
 
@@ -57,10 +58,10 @@ class Order extends Model
         $map = [
             'created' => 1,
             'made' => 1,
-            'paid' => 2,
-            'shipped' => 3,
-            'received' => 4,
-            'completed' => 4,
+            'On Delivery' => 2,
+            'Arrvied' => 3,
+            'Received' => 4,
+            'Completed' => 4,
         ];
         return $map[$this->status] ?? 1;
     }

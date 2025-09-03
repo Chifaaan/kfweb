@@ -65,8 +65,8 @@ class PemesananController extends Controller
         // timeline array (urutan)
         $timeline = [
             ['key' => 'made', 'label' => 'Order Made', 'time' => $order->created_at],
-            ['key' => 'paid', 'label' => 'Order Paid', 'time' => $order->paid_at],
-            ['key' => 'shipped', 'label' => 'Shipped', 'time' => $order->shipped_at],
+            ['key' => 'On Delivery', 'label' => 'On Delivery', 'time' => $order->delivered_at],
+            ['key' => 'Arrived', 'label' => 'Arrived', 'time' => $order->arrived_at],
             ['key' => 'received', 'label' => 'Received', 'time' => $order->received_at],
         ];
 
