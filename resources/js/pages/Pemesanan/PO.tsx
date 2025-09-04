@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import AppLayout from "@/layouts/app-layout";
 import { Head, router } from "@inertiajs/react";
-import { type BreadcrumbItem, CartItem, OrderPayload, Order } from "@/types";
+import { type BreadcrumbItem, CartItem, OrderPayload } from "@/types";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -36,8 +36,8 @@ export default function PurchaseOrderPage() {
   const [vaNumber, setVaNumber] = useState("");
   const [accountBank, setAccountBank] = useState("");
   const [accountNo, setAccountNo] = useState("");
-  const [remainingCredit, setRemainingCredit] = useState(1_000_000);
-  const [status, setStatus] = useState("Pending");
+  const [remainingCredit] = useState(1_000_000);
+  const [status] = useState("Pending");
   const [showDialog, setShowDialog] = useState<"cancel" | "submit" | null>(null);
   const [validationErrors, setValidationErrors] = useState<{ [key: string]: string }>({});
 
@@ -105,9 +105,10 @@ export default function PurchaseOrderPage() {
     const order: OrderPayload = {
       id_transaksi: `TRX-${Date.now()}`,
       id_koperasi: koperasiInfo.koperasi_id,
-      status: "Process",
+      status: "On Delivery",
       merchant_id: koperasiInfo.merchant_id,
       merchant_name: koperasiInfo.merchant_name,
+      subTotal: subtotal,
       total_nominal: total,
       remaining_credit: isKredit ? remainingCredit - total : remainingCredit,
       is_for_sale: false,
@@ -123,7 +124,7 @@ export default function PurchaseOrderPage() {
       })),
     };
 
-    router.post(route("po.store"), order as any, {
+    router.post(route("po.store"), {...order}, {
       onSuccess: () => {
         localStorage.removeItem("cart");
         setCartItems([]);

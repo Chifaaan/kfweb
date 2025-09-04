@@ -17,6 +17,7 @@ public function store(Request $request)
         'status'         => 'required|string',
         'merchant_id'    => 'required|string',
         'merchant_name'  => 'required|string',
+        'subTotal'        => 'required|numeric',
         'total_nominal'  => 'required|numeric',
         'remaining_credit' => 'required|numeric',
         'is_for_sale'    => 'boolean',

@@ -15,6 +15,7 @@ class Order extends Model
         'status',
         'merchant_id',
         'merchant_name',
+        'subTotal',
         'total_nominal',
         'remaining_credit',
         'is_for_sale',
@@ -59,9 +60,8 @@ class Order extends Model
             'created' => 1,
             'made' => 1,
             'On Delivery' => 2,
-            'Arrvied' => 3,
-            'Received' => 4,
-            'Completed' => 4,
+            'Received' => 3,
+            'Completed' => 3,
         ];
         return $map[$this->status] ?? 1;
     }

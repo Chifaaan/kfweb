@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
 import { ArrowRight, Package, Truck, CheckCircle, ArrowLeft } from 'lucide-react';
-import type { BreadcrumbItem, ProductPivot } from '@/types';
+import type { BreadcrumbItem, ProductPivot, Order, BuyerAddress } from '@/types';
 
 const breadcrumbs: BreadcrumbItem[] = [
   { title: "Dashboard", href: "/dashboard" },
@@ -16,9 +16,11 @@ const breadcrumbs: BreadcrumbItem[] = [
 type TimelineItem = { key: string; label: string; time: string | null };
 
 export default function Detail() {
-  const { props } = usePage<{ order: any; timeline: TimelineItem[] }>();
+  const { props } = usePage<{ order: Order; timeline: TimelineItem[], buyer:BuyerAddress; }>();
   const order = props.order;
+  const buyer = props.buyer;
   const timeline = props.timeline;
+  const ppn = order.subTotal * 0.11;
 
   const currency = (v: number) => {
     if (!v && v !== 0) return '-';
@@ -38,8 +40,7 @@ export default function Detail() {
   const stepIndexByStatus: Record<string, number> = {
     made: 0,
     'On Delivery': 1,
-    'Arrived': 2,
-    'Received': 3,
+    'Received': 2,
   };
   const activeIndex = stepIndexByStatus[order.status] ?? 0;
 
@@ -71,7 +72,6 @@ export default function Detail() {
                 {[
                   { key: 'made', label: 'Order Made', icon: <Package size={16} /> },
                   { key: 'delivery', label: 'On Delivery', icon: <Truck size={16} /> },
-                  { key: 'arrived', label: 'Arrived', icon: <Truck size={16} /> },
                   { key: 'received', label: 'Received', icon: <CheckCircle size={16} /> },
                 ].map((st, idx) => {
                   const done = idx <= activeIndex;
@@ -91,7 +91,7 @@ export default function Detail() {
                         </div>
                       </div>
                       {/* Show arrow only on medium screens and up, and if not the last step */}
-                      {idx < 3 && <ArrowRight className="hidden sm:block text-gray-300 mx-1" />}
+                      {idx < 2 && <ArrowRight className="hidden sm:block text-gray-300 mx-1" />}
                       {/* For smaller screens, an implicit break or vertical separation can occur */}
                     </React.Fragment>
                   );
@@ -107,19 +107,19 @@ export default function Detail() {
                   <CardTitle>Shipping Address (Buyer)</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {order.buyer_address ? (
+                  {buyer ? (
                     <div>
-                      <div className="font-medium">{order.buyer_address.recipient_name || '—'}</div>
-                      <div className="text-sm">{order.buyer_address.address_line1}</div>
-                      {order.buyer_address.address_line2 && (
-                        <div className="text-sm">{order.buyer_address.address_line2}</div>
+                      <div className="font-medium">{buyer.recipient_name || '—'}</div>
+                      <div className="text-sm">{buyer.address_line1}</div>
+                      {buyer.address_line2 && (
+                        <div className="text-sm">{buyer.address_line2}</div>
                       )}
                       <div className="text-sm">
-                        {order.buyer_address.city}, {order.buyer_address.province}{' '}
-                        {order.buyer_address.postal_code}
+                        {buyer.city}, {buyer.province}{' '}
+                        {buyer.postal_code}
                       </div>
-                      <div className="text-sm">{order.buyer_address.country}</div>
-                      <div className="text-sm mt-2">Phone: {order.buyer_address.phone || '-'}</div>
+                      <div className="text-sm">{buyer.country}</div>
+                      <div className="text-sm mt-2">Phone: {buyer.phone || '-'}</div>
                     </div>
                   ) : (
                     <div className="text-sm text-muted-foreground">
@@ -191,7 +191,10 @@ export default function Detail() {
               <CardContent>
                 <div className="grid grid-cols-2 gap-2">
                   <div>Product Price</div>
-                  <div className="text-right">{currency(order.total_nominal)}</div>
+                  <div className="text-right">{currency(order.subTotal)}</div>
+
+                  <div>Product Tax (11%)</div>
+                  <div className="text-right">{currency(ppn)}</div>
 
                   <div>Shipping Cost</div>
                   <div className="text-right">—</div>
@@ -208,7 +211,7 @@ export default function Detail() {
             </Card>
 
             {/* Card Konfirmasi Paket */}
-            {order.status === "Arrived" && (
+            {order.status === "On Delivery" && (
               <Card>
                 <CardHeader>
                   <CardTitle>PAKET SUDAH TIBA</CardTitle>

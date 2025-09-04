@@ -105,6 +105,7 @@ export interface Order {
   status: string;
   merchant_id: string;
   merchant_name: string;
+  subTotal: number;
   total_nominal: number;
   remaining_credit: number;
   is_for_sale: boolean;
@@ -119,6 +120,7 @@ export interface Order {
     sku: string;
     quantity: number;
   }[]; //Relasi ke Product
+  created_at: string;
 }
 
 export interface OrderPayload {
@@ -127,6 +129,7 @@ export interface OrderPayload {
   status: string;
   merchant_id: string;
   merchant_name: string;
+  subTotal: number;
   total_nominal: number;
   remaining_credit: number;
   is_for_sale: boolean;

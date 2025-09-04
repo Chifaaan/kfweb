@@ -66,7 +66,6 @@ class PemesananController extends Controller
         $timeline = [
             ['key' => 'made', 'label' => 'Order Made', 'time' => $order->created_at],
             ['key' => 'On Delivery', 'label' => 'On Delivery', 'time' => $order->delivered_at],
-            ['key' => 'Arrived', 'label' => 'Arrived', 'time' => $order->arrived_at],
             ['key' => 'Received', 'label' => 'Received', 'time' => $order->received_at],
         ];
 
@@ -85,8 +84,8 @@ public function updateStatus(Request $request, $id_transaksi)
 
     switch ($request->status) {
 
-        case 'Arrived':
-            // kalau ditekan "Arrived", langsung ubah jadi "received"
+        case 'On Delivery':
+            // kalau ditekan "On Delivery", langsung ubah jadi "received"
             $order->status = 'Received';
             $order->received_at = now();
             break;

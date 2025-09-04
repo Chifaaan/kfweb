@@ -15,6 +15,7 @@ return new class extends Migration
             $table->string('status');
             $table->string('merchant_id');
             $table->string('merchant_name');
+            $table->decimal('subTotal', 15, 2); // Additional Column
             $table->decimal('total_nominal', 15, 2);
             $table->decimal('remaining_credit', 15, 2);
             $table->boolean('is_for_sale')->default(false);
@@ -25,7 +26,7 @@ return new class extends Migration
             $table->string('va_number')->nullable();
             $table->timestamp('timestamp');
             $table->timestamps();
-            $table->timestamp('received_at')->nullable();
+            $table->timestamp('received_at')->nullable(); // Additional Column
         });
     }
 

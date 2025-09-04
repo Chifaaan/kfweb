@@ -1,4 +1,3 @@
-import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
 import { CartItem, Product, type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
