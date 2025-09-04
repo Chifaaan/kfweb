@@ -1,8 +1,10 @@
 import React from "react";
 import { ShoppingCart } from "lucide-react";
+import { Link } from '@inertiajs/react';
 
 export default function ProductCard({ product, addToCart }) {
   const { 
+    id,
     name,
     price,
     weight,
@@ -53,23 +55,34 @@ export default function ProductCard({ product, addToCart }) {
       {/* Bagian Bawah */}
       <div className="mt-3">
         <p className="text-lg md:text-xl font-bold text-blue-600">
-          Rp {price?.toLocaleString() ?? "0"}
+          Rp {price?.toLocaleString('id-ID') ?? "0"}
         </p>
 
-        <button
-          disabled={!is_active}
-          onClick={(e) => {
-            e.stopPropagation();
-            addToCart(product);
-          }}
-          className={`w-full flex items-center justify-center gap-2 mt-2 px-3 py-2 rounded text-white font-semibold transition-colors ${
-            is_active
-              ? "bg-blue-600 hover:bg-blue-700"
-              : "bg-gray-400 cursor-not-allowed"
-          }`}
-        >
-          <ShoppingCart size={16} /> Add to Cart
-        </button>
+        <div className="grid grid-cols-2 gap-2 mt-2">
+            <Link
+              href={route('medicines.show', { id })}
+              className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded text-blue-600 font-semibold transition-colors border border-blue-600 bg-white hover:bg-blue-50"
+            >
+            <button onClick={(e) => e.stopPropagation()}>
+              Detail
+            </button>
+
+            </Link>
+            <button
+              disabled={!is_active}
+              onClick={(e) => {
+                e.stopPropagation();
+                addToCart(product);
+              }}
+              className={`w-full flex items-center justify-center gap-2 px-3 py-2 rounded text-white font-semibold transition-colors ${
+                is_active
+                  ? "bg-blue-600 hover:bg-blue-700"
+                  : "bg-gray-400 cursor-not-allowed"
+              }`}
+            >
+              <ShoppingCart size={16} /> Add
+            </button>
+        </div>
       </div>
     </div>
   );

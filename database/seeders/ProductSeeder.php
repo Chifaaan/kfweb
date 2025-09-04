@@ -20,7 +20,7 @@ class ProductSeeder extends Seeder
                 'length' => 20,
                 'width' => 10,
                 'height' => 5,
-                'image' => 'https://placehold.co/400',
+                'image' => 'http://smb-padiumkm-images-public-stage.oss-ap-southeast-5.aliyuncs.com/assets/tmp/686b8574cee4f1ce8f4dc909/product/KF_FACIAL_TISSUE_200S_ANIMAL.png',
                 'description' => 'Tisu wajah isi besar...',
                 'pharmacology' => json_encode([
                     "Lembut di kulit wajah",

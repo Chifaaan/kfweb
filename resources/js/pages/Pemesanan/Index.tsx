@@ -3,11 +3,10 @@ import { CartItem, Product, type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 import Filters from "@/components/Filters";
 import ProductCard from "@/components/ProductCard";
+import FloatingCart from '@/components/FloatingCart';
 import { useState, useEffect } from "react";
 import { ShoppingCart } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const breadcrumbs: BreadcrumbItem[] = [
   { title: 'Dashboard', href: '/dashboard' },
@@ -36,7 +35,7 @@ export default function Index({ products, categories, packages, orderUnits }: Pr
     orderUnits: []
   });
   const [cart, setCart] = useState<CartItem[]>([]);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [, setSelectedProduct] = useState<Product | null>(null);
 
   // 🔹 jumlah jenis produk unik
   const totalItems = cart.length;
@@ -162,78 +161,7 @@ export default function Index({ products, categories, packages, orderUnits }: Pr
       </div>
 
       {/* 🔹 Floating Cart Button */}
-      <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6">
-        <a href="/pemesanan/cart" className="relative">
-          <button className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg">
-            <ShoppingCart size={24} className="sm:size-8" />
-          </button>
-          {totalItems > 0 && (
-            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center">
-              {totalItems}
-            </span>
-          )}
-        </a>
-      </div>
-
-      {/* 🔹 Modal Detail Produk */}
-      <Dialog open={!!selectedProduct} onOpenChange={() => setSelectedProduct(null)}>
-        <DialogContent className="w-[95%] sm:max-w-lg md:max-w-2xl max-h-[90vh] overflow-y-auto">
-          {selectedProduct && (
-            <>
-              <DialogHeader>
-                <DialogTitle>{selectedProduct.name}</DialogTitle>
-                <DialogDescription>
-                  {selectedProduct.description || "Tidak ada deskripsi tersedia."}
-                </DialogDescription>
-              </DialogHeader>
-
-              <div className="flex flex-col sm:flex-row gap-4">
-                <img
-                  src={selectedProduct.image}
-                  alt={selectedProduct.image_alt ?? selectedProduct.name}
-                  className="w-full sm:w-1/3 rounded-lg border object-cover"
-                />
-                <div className="flex-1 space-y-2">
-                  <p><strong>Harga:</strong> Rp{selectedProduct.price.toLocaleString()}</p>
-                  <p><strong>Kategori:</strong> {selectedProduct.category?.main_category ?? "-"}</p>
-                  <p><strong>Brand:</strong> {selectedProduct.brand ?? "-"}</p>
-                  <p><strong>Kemasan:</strong> {selectedProduct.order_unit}</p>
-                  <p><strong>Isi per Kemasan:</strong> {selectedProduct.content}</p>
-                  <p><strong>Berat:</strong> {selectedProduct.weight} gr</p>
-                </div>
-              </div>
-
-              {/* 🔹 Tabs untuk Benefit & Dosage */}
-              <Tabs defaultValue="benefit" className="mt-4">
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="benefit">Benefit</TabsTrigger>
-                  <TabsTrigger value="dosage">Dosage</TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="benefit" className="mt-2 text-sm text-gray-700">
-                  {selectedProduct.pharmacology ? (
-                    <p>{selectedProduct.pharmacology}</p>
-                  ) : (
-                    "Belum ada informasi benefit."
-                  )}
-                </TabsContent>
-
-                <TabsContent value="dosage" className="mt-2 text-sm text-gray-700">
-                  {Array.isArray(selectedProduct.dosage) && selectedProduct.dosage.length > 0 ? (
-                    <ul className="list-disc pl-5 space-y-1">
-                      {selectedProduct.dosage.map((line: string, idx: number) => (
-                        <li key={idx}>{line}</li>
-                      ))}
-                    </ul>
-                  ) : (
-                    "Belum ada informasi dosis."
-                  )}
-                </TabsContent>
-              </Tabs>
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
+      <FloatingCart totalItems={totalItems} />
     </AppLayout>
   );
 }

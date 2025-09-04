@@ -27,8 +27,7 @@ export default function History() {
   const statusColors: Record<string, string> = {
     Process: 'bg-yellow-100 text-yellow-700',
     'On Delivery': 'bg-blue-100 text-blue-700',
-    Arrived: 'bg-green-100 text-green-700',
-    Received: 'bg-gray-100 text-gray-700',
+    Received: 'bg-green-100 text-green-700',
   };
 
   const filteredOrders = orders.filter((order) => {
@@ -64,7 +63,6 @@ export default function History() {
               <SelectItem value="Semua">Semua Status</SelectItem>
               <SelectItem value="Process">Process</SelectItem>
               <SelectItem value="On Delivery">On Delivery</SelectItem>
-              <SelectItem value="Arrived">Arrived</SelectItem>
               <SelectItem value="Received">Received</SelectItem>
             </SelectContent>
           </Select>

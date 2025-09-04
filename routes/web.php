@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\PemesananController;
 use App\Http\Controllers\PenerimaanController;
 use App\Http\Controllers\PurchaseOrderController;
@@ -14,20 +15,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
+
     Route::get('pemesanan/medicines', [PemesananController::class, 'index'])->name('medicines');
+    Route::get('pemesanan/medicines/{id}', [PemesananController::class, 'show'])->name('medicines.show');
     Route::get('pemesanan/cart', [PemesananController::class , 'cart'])->name('cart');
     Route::get('pemesanan/po', [PemesananController::class , 'po'])->name('po');
     Route::post('pemesanan/po', [PurchaseOrderController::class, 'store'])->name('po.store');
-    Route::get('pemesanan/history', [PemesananController::class , 'history'])->name('history');
     Route::get('penerimaan', [PenerimaanController::class , 'index'])->name('penerimaan');
-    Route::get('penerimaan/history', [PenerimaanController::class , 'create'])->name('penerimaan.history');
-    // detail
-    Route::get('pemesanan/history/{id_transaksi}', [PemesananController::class, 'show'])->name('history.show');
 
+    // History
+    Route::get('pemesanan/history', [HistoryController::class , 'history'])->name('history');
+    // detail
+    Route::get('pemesanan/history/{id_transaksi}', [HistoryController::class, 'show'])->name('history.show');
     // update status (POST)
-    Route::post('pemesanan/history/{id_transaksi}/status', [PemesananController::class, 'updateStatus'])->name('history.updateStatus');
-    // Route::get('pemesanan/po', [PurchaseOrderController::class, 'create'])->name('po.create');
-    // Route::post('pemesanan/po', [PurchaseOrderController::class, 'store'])->name('po.store');
+    Route::post('pemesanan/history/{id_transaksi}/status', [HistoryController::class, 'updateStatus'])->name('history.updateStatus');
 });
 
 require __DIR__.'/settings.php';
