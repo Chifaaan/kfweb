@@ -1,0 +1,9 @@
+php-build:
+image: composer:2
+commands:
+- composer install
+- vendor/bin/phpunit
+when:
+event: push
+branch: main
+path: \["composer.json"\]
