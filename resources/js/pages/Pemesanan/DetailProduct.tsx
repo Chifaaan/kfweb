@@ -162,8 +162,132 @@ export default function DetailProduct({ product }: { product: Product }) {
 
                   </div>
                   
-                  {/* ... (Product Details Accordion remains the same) ... */}
-                  <div className="mt-8 border-t border-border"><Accordion type="single" collapsible className="w-full pt-2" defaultValue="description"><AccordionItem value="description"><AccordionTrigger>Deskripsi</AccordionTrigger><AccordionContent><p className="text-sm text-muted-foreground leading-relaxed">{product.description || 'Tidak ada deskripsi untuk produk ini.'}</p></AccordionContent></AccordionItem><AccordionItem value="pharmacology"><AccordionTrigger>Farmakologi</AccordionTrigger><AccordionContent><p className="text-sm text-muted-foreground leading-relaxed">{product.pharmacology || 'Tidak ada informasi farmakologi untuk produk ini.'}</p></AccordionContent></AccordionItem><AccordionItem value="dosage"><AccordionTrigger>Aturan Pakai & Dosis</AccordionTrigger><AccordionContent>{Array.isArray(product.dosage) && product.dosage.length > 0 ? (<ul className="list-disc pl-5 space-y-1 text-sm text-muted-foreground">{product.dosage.map((dose, index) => (<li key={index}>{dose}</li>))}</ul>) : (<p className="text-sm text-muted-foreground">Tidak ada informasi aturan pakai & dosis untuk produk ini.</p>)}</AccordionContent></AccordionItem></Accordion></div>
+                  {/* --- BAGIAN YANG DIPERBARUI DIMULAI DI SINI --- */}
+                  <div className="mt-8 border-t border-border">
+                    <Accordion 
+                      type="single" 
+                      collapsible 
+                      className="w-full pt-2" 
+                      defaultValue="description"
+                    >
+                      <AccordionItem value="description">
+                        <AccordionTrigger>Deskripsi</AccordionTrigger>
+                        <AccordionContent>
+                          <p className="text-sm text-muted-foreground leading-relaxed">
+                            {product.description || 'Tidak ada deskripsi untuk produk ini.'}
+                          </p>
+                        </AccordionContent>
+                      </AccordionItem>
+                      
+                      {/* [PERUBAHAN 1] Farmakologi diubah menjadi list */}
+                      <AccordionItem value="pharmacology">
+                        <AccordionTrigger>Farmakologi</AccordionTrigger>
+                        <AccordionContent>
+                          {(() => {
+                            let pharmacologyData: string[] = [];
+                              if (typeof product.pharmacology === "string" && product.pharmacology.startsWith("[")) {
+                                pharmacologyData = JSON.parse(product.pharmacology);
+                              } 
+                            if (pharmacologyData.length > 0) {
+                              return (
+                                <ul className="list-disc pl-5 space-y-1 text-sm text-muted-foreground">
+                                  {pharmacologyData.map((item, index) => (
+                                    <li key={index}>{item}</li>
+                                  ))}
+                                </ul>
+                              );
+                            }
+
+                            return (
+                              <p className="text-sm text-muted-foreground">
+                                {typeof product.pharmacology === "string"
+                                  ? product.pharmacology
+                                  : "Tidak ada informasi farmakologi untuk produk ini."}
+                              </p>
+                            );
+                          })()}
+                        </AccordionContent>
+                      </AccordionItem>
+
+<AccordionItem value="dosage">
+  <AccordionTrigger>Aturan Pakai & Dosis</AccordionTrigger>
+  <AccordionContent>
+    {(() => {
+      let dosageData: Record<string, string> = {};
+
+      if (typeof product.dosage === "string" && product.dosage.startsWith("{")) {
+        dosageData = JSON.parse(product.dosage);
+      } 
+    
+      const dosageEntries = Object.entries(dosageData);
+
+      if (dosageEntries.length > 0) {
+        return (
+          <ul className="list-disc pl-5 space-y-1 text-sm text-muted-foreground">
+            {dosageEntries.map(([key, value], index) => (
+              <li key={index}>
+                <strong>{key}:</strong> {value}
+              </li>
+            ))}
+          </ul>
+        );
+      }
+
+      return (
+        <p className="text-sm text-muted-foreground">
+          {typeof product.dosage === "string" && product.dosage.length > 0
+            ? product.dosage
+            : "Tidak ada informasi aturan pakai & dosis untuk produk ini."}
+        </p>
+      );
+    })()}
+  </AccordionContent>
+</AccordionItem>
+
+                      {/* [PERUBAHAN 2] Accordion baru untuk Informasi Kemasan */}
+                      <AccordionItem value="packaging">
+                        <AccordionTrigger>Informasi Kemasan</AccordionTrigger>
+                        <AccordionContent>
+                          <div className="space-y-2 text-sm">
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Brand Obat:</span>
+                              <span className="font-semibold text-foreground">{product.brand || '-'}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Jenis Kemasan:</span>
+                              <span className="font-semibold text-foreground">{product.base_uom || '-'}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Jumlah dalam Kemasan:</span>
+                              <span className="font-semibold text-foreground">
+                                {product.content ? `${product.content} ${product.base_uom}` : '-'}
+                              </span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Packing Kemasan:</span>
+                              <span className="font-semibold text-foreground">{product.order_unit || '-'}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Berat Kemasan:</span>
+                              <span className="font-semibold text-foreground">
+                                {product.weight ? `${product.weight} gram` : '-'}
+                              </span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Dimensi Kemasan:</span>
+                              <span className="font-semibold text-foreground">
+                                {product.length && product.width && product.height 
+                                  ? `${product.length} x ${product.width} x ${product.height} cm` 
+                                  : '-'}
+                              </span>
+                            </div>
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
+                  </div>
+                  {/* --- BAGIAN YANG DIPERBARUI BERAKHIR DI SINI --- */}
+
                 </div>
               </div>
             </CardContent>

@@ -31,6 +31,7 @@ class Product extends Model
 
     protected $casts = [
         'dosage' => 'array',
+        'pharmacology' => 'array'
     ];
 
     public function orders()
