@@ -24,8 +24,8 @@ export default function DetailProduct({ product }: { product: Product }) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
-  // The 'showTooltip' state is no longer needed
   const totalItems = cart.length;
+  const [animationTrigger, setAnimationTrigger] = useState(0);
 
   // Load cart from localStorage
   useEffect(() => {
@@ -62,6 +62,7 @@ export default function DetailProduct({ product }: { product: Product }) {
       localStorage.setItem('cart', JSON.stringify(newCart));
       return newCart;
     });
+    setAnimationTrigger(prev => prev + 1);
   };
 
   // Handle quantity change
@@ -170,7 +171,7 @@ export default function DetailProduct({ product }: { product: Product }) {
         </div>
       </div>
 
-      <FloatingCart totalItems={totalItems} />
+      <FloatingCart totalItems={totalItems} animationTrigger={animationTrigger} />
     </AppLayout>
   );
 };

@@ -36,6 +36,7 @@ export default function Index({ products, categories, packages, orderUnits }: Pr
   });
   const [cart, setCart] = useState<CartItem[]>([]);
   const [, setSelectedProduct] = useState<Product | null>(null);
+  const [animationTrigger, setAnimationTrigger] = useState(0);
 
   // 🔹 jumlah jenis produk unik
   const totalItems = cart.length;
@@ -65,6 +66,7 @@ export default function Index({ products, categories, packages, orderUnits }: Pr
       localStorage.setItem("cart", JSON.stringify(newCart));
       return newCart;
     });
+    setAnimationTrigger(prev => prev + 1);
   };
 
   // 🔹 filter berdasarkan search
@@ -161,7 +163,7 @@ export default function Index({ products, categories, packages, orderUnits }: Pr
       </div>
 
       {/* 🔹 Floating Cart Button */}
-      <FloatingCart totalItems={totalItems} />
+      <FloatingCart totalItems={totalItems} animationTrigger={animationTrigger} />
     </AppLayout>
   );
 }

@@ -1,6 +1,7 @@
 import React from "react";
 import { ShoppingCart } from "lucide-react";
 import { Link } from '@inertiajs/react';
+import { motion } from "framer-motion";
 
 export default function ProductCard({ product, addToCart }) {
   const { 
@@ -16,8 +17,18 @@ export default function ProductCard({ product, addToCart }) {
     category,
   } = product;
 
+  const buttonVariants = {
+    hover: { scale: 1.05 },
+    tap: { scale: 0.95 },
+  };
+
   return (
-    <div className="border rounded-lg p-3 shadow-sm transition-colors flex flex-col justify-between h-full relative">
+    <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+        className="border rounded-lg p-3 shadow-sm transition-colors flex flex-col justify-between h-full relative"
+    >
       
       {/* Floating Category Badge */}
       {category?.main_category && (
@@ -59,21 +70,26 @@ export default function ProductCard({ product, addToCart }) {
         </p>
 
         <div className="grid grid-cols-2 gap-2 mt-2">
-            <Link
+            <motion.a
               href={route('medicines.show', { id })}
+              variants={buttonVariants}
+              whileHover="hover"
+              whileTap="tap"
               className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded text-blue-600 font-semibold transition-colors border border-blue-600 bg-white hover:bg-blue-50"
+              onClick={(e) => e.stopPropagation()} 
             >
-            <button onClick={(e) => e.stopPropagation()}>
               Detail
-            </button>
-
-            </Link>
-            <button
+            </motion.a>
+            
+            <motion.button
               disabled={!is_active}
               onClick={(e) => {
                 e.stopPropagation();
                 addToCart(product);
               }}
+              variants={buttonVariants}
+              whileHover="hover"
+              whileTap="tap"
               className={`w-full flex items-center justify-center gap-2 px-3 py-2 rounded text-white font-semibold transition-colors ${
                 is_active
                   ? "bg-blue-600 hover:bg-blue-700"
@@ -81,9 +97,9 @@ export default function ProductCard({ product, addToCart }) {
               }`}
             >
               <ShoppingCart size={16} /> Add
-            </button>
+            </motion.button>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
