@@ -7,11 +7,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { ShoppingCart, Minus, Plus, Check } from 'lucide-react';
-// Import Framer Motion
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 
-// Create a motion-enabled version of the ShadCN Button
 const MotionButton = motion(Button);
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -44,7 +42,6 @@ export default function DetailProduct({ product }: { product: Product }) {
     return () => clearTimeout(timer);
   }, [isAdded]);
 
-  // Add to cart
   const addToCart = (productToAdd: Product, quantityToAdd: number) => {
     setCart((prevCart) => {
       const existingItem = prevCart.find((item) => item.id === productToAdd.id);
@@ -65,12 +62,10 @@ export default function DetailProduct({ product }: { product: Product }) {
     setAnimationTrigger(prev => prev + 1);
   };
 
-  // Handle quantity change
   const handleQuantityChange = (amount: number) => {
     setQuantity((prev) => Math.max(1, prev + amount));
   };
   
-  // Simplified click handler
   const handleAddToCartClick = () => {
     if (isAdded) return;
     addToCart(product, quantity);
@@ -97,7 +92,6 @@ export default function DetailProduct({ product }: { product: Product }) {
 
                 {/* Product Information */}
                 <div className="flex flex-col">
-                  {/* ... (Product Header, Price, etc. remain the same) ... */}
                   <div className="flex justify-between items-start gap-4">
                     <h1 className="text-2xl lg:text-3xl font-extrabold tracking-tight">{product.name}</h1>
                     {product.category?.main_category && (<Badge variant="secondary" className="shrink-0 mt-1">{product.category.main_category}</Badge>)}
@@ -119,7 +113,7 @@ export default function DetailProduct({ product }: { product: Product }) {
                       <Button variant="ghost" size="icon" className="h-11 w-11" onClick={() => handleQuantityChange(1)}><Plus className="h-4 w-4" /></Button>
                     </div>
 
-                    {/* --- UPDATED: Framer Motion Button with Custom Animated Tooltip --- */}
+                    {/* Button and Animations */}
                     <div className="relative w-full sm:flex-1">
                       <AnimatePresence>
                         {isAdded && (
@@ -162,7 +156,6 @@ export default function DetailProduct({ product }: { product: Product }) {
 
                   </div>
                   
-                  {/* --- BAGIAN YANG DIPERBARUI DIMULAI DI SINI --- */}
                   <div className="mt-8 border-t border-border">
                     <Accordion 
                       type="single" 
@@ -179,7 +172,7 @@ export default function DetailProduct({ product }: { product: Product }) {
                         </AccordionContent>
                       </AccordionItem>
                       
-                      {/* [PERUBAHAN 1] Farmakologi diubah menjadi list */}
+                      {/* Pharmacology Information */}
                       <AccordionItem value="pharmacology">
                         <AccordionTrigger>Farmakologi</AccordionTrigger>
                         <AccordionContent>
@@ -209,42 +202,43 @@ export default function DetailProduct({ product }: { product: Product }) {
                         </AccordionContent>
                       </AccordionItem>
 
-<AccordionItem value="dosage">
-  <AccordionTrigger>Aturan Pakai & Dosis</AccordionTrigger>
-  <AccordionContent>
-    {(() => {
-      let dosageData: Record<string, string> = {};
+                      {/* Dosage Information */}
+                      <AccordionItem value="dosage">
+                        <AccordionTrigger>Aturan Pakai & Dosis</AccordionTrigger>
+                        <AccordionContent>
+                          {(() => {
+                            let dosageData: Record<string, string> = {};
 
-      if (typeof product.dosage === "string" && product.dosage.startsWith("{")) {
-        dosageData = JSON.parse(product.dosage);
-      } 
-    
-      const dosageEntries = Object.entries(dosageData);
+                            if (typeof product.dosage === "string" && product.dosage.startsWith("{")) {
+                              dosageData = JSON.parse(product.dosage);
+                            } 
+                          
+                            const dosageEntries = Object.entries(dosageData);
 
-      if (dosageEntries.length > 0) {
-        return (
-          <ul className="list-disc pl-5 space-y-1 text-sm text-muted-foreground">
-            {dosageEntries.map(([key, value], index) => (
-              <li key={index}>
-                <strong>{key}:</strong> {value}
-              </li>
-            ))}
-          </ul>
-        );
-      }
+                            if (dosageEntries.length > 0) {
+                              return (
+                                <ul className="list-disc pl-5 space-y-1 text-sm text-muted-foreground">
+                                  {dosageEntries.map(([key, value], index) => (
+                                    <li key={index}>
+                                      <strong>{key}:</strong> {value}
+                                    </li>
+                                  ))}
+                                </ul>
+                              );
+                            }
 
-      return (
-        <p className="text-sm text-muted-foreground">
-          {typeof product.dosage === "string" && product.dosage.length > 0
-            ? product.dosage
-            : "Tidak ada informasi aturan pakai & dosis untuk produk ini."}
-        </p>
-      );
-    })()}
-  </AccordionContent>
-</AccordionItem>
-
-                      {/* [PERUBAHAN 2] Accordion baru untuk Informasi Kemasan */}
+                            return (
+                              <p className="text-sm text-muted-foreground">
+                                {typeof product.dosage === "string" && product.dosage.length > 0
+                                  ? product.dosage
+                                  : "Tidak ada informasi aturan pakai & dosis untuk produk ini."}
+                              </p>
+                            );
+                          })()}
+                        </AccordionContent>
+                      </AccordionItem>
+                      
+                      {/*Informasi Kemasan*/}
                       <AccordionItem value="packaging">
                         <AccordionTrigger>Informasi Kemasan</AccordionTrigger>
                         <AccordionContent>
@@ -286,8 +280,6 @@ export default function DetailProduct({ product }: { product: Product }) {
                       </AccordionItem>
                     </Accordion>
                   </div>
-                  {/* --- BAGIAN YANG DIPERBARUI BERAKHIR DI SINI --- */}
-
                 </div>
               </div>
             </CardContent>
@@ -295,6 +287,7 @@ export default function DetailProduct({ product }: { product: Product }) {
         </div>
       </div>
 
+      {/* Floating Cart */}
       <FloatingCart totalItems={totalItems} animationTrigger={animationTrigger} />
     </AppLayout>
   );
