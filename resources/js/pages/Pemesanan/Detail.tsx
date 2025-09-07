@@ -130,7 +130,7 @@ export default function Detail() {
                   <CardTitle>Payment Information</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {order.payment_method === 'VA' ? (
+                  {order.payment_method === 'Virtual Account' ? (
                     <div className="space-y-1">
                       <div><span className="font-medium">Method:</span> Virtual Account</div>
                       <div><span className="font-medium">Bank:</span> {order.account_bank || '-'}</div>

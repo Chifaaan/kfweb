@@ -4,18 +4,18 @@ import { Head, router } from "@inertiajs/react";
 import { type BreadcrumbItem, CartItem, OrderPayload } from "@/types";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-// Import Tooltip components
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { CreditCard, Wallet } from "lucide-react";
 
 const breadcrumbs: BreadcrumbItem[] = [
   { title: "Medicines", href: "/pemesanan/medicines" },
@@ -24,7 +24,6 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function PurchaseOrderPage() {
-  // Dummy data koperasi user
   const koperasiInfo = {
     merchant_id: "MER-001",
     merchant_name: "PT Supplier Sehat",
@@ -32,71 +31,41 @@ export default function PurchaseOrderPage() {
     koperasi_name: "Koperasi Sejahtera",
   };
 
-  const [paymentMethod, setPaymentMethod] = useState("VA");
-  const [vaNumber, setVaNumber] = useState("");
-  const [accountBank, setAccountBank] = useState("");
-  const [accountNo, setAccountNo] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState<"Mandiri" | "BCA" | "Kredit" | null>(null);
+  const [paymentType, setPaymentType] = useState("CAD");
+
   const [remainingCredit] = useState(1_000_000);
   const [status] = useState("Pending");
   const [showDialog, setShowDialog] = useState<"cancel" | "submit" | null>(null);
-  const [validationErrors, setValidationErrors] = useState<{ [key: string]: string }>({});
 
-  // Cart Items
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   useEffect(() => {
     const storedCart = localStorage.getItem("cart");
     if (storedCart) setCartItems(JSON.parse(storedCart));
   }, []);
 
-  // Perhitungan order
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const ppn = subtotal * 0.11;
   const total = subtotal + ppn;
 
-  // Cek kredit cukup atau tidak
   const isCreditNotEnough = paymentMethod === "Kredit" && total > remainingCredit;
 
-  // Deskripsi metode pembayaran
   const paymentDescription =
     paymentMethod === "Kredit"
-      ? "Pembayaran menggunakan Kredit Koperasi"
-      : `Pembayaran menggunakan Bank Virtual Account ${accountBank || "-"} (VA ${vaNumber || "-"})`;
-
-  // Reset VA fields when changing to Kredit Koperasi
-  useEffect(() => {
-    if (paymentMethod === "Kredit") {
-      setVaNumber("");
-      setAccountBank("");
-      setAccountNo("");
-      setValidationErrors({}); // Clear validation errors when switching
-    }
-  }, [paymentMethod]);
-
-  const validateVAFields = () => {
-    const errors: { [key: string]: string } = {};
-    if (paymentMethod === "VA") {
-      if (!vaNumber.trim()) {
-        errors.vaNumber = "VA Number is required.";
-      }
-      if (!accountBank.trim()) {
-        errors.accountBank = "Bank is required.";
-      }
-      if (!accountNo.trim()) {
-        errors.accountNo = "Account Number is required.";
-      }
-    }
-    setValidationErrors(errors);
-    return Object.keys(errors).length === 0;
-  };
+      ? `Pembayaran menggunakan Kredit Koperasi - ${paymentType}`
+      : paymentMethod
+      ? `Pembayaran menggunakan Bank ${paymentMethod} Virtual Account`
+      : "Anda belum memilih metode pembayaran.";
 
   const handleSubmit = () => {
-    if (isCreditNotEnough) {
-      setShowDialog(null); // Close the submit dialog if credit is not enough
+    if (!paymentMethod) {
+      alert("Harap pilih salah satu metode pembayaran terlebih dahulu.");
+      setShowDialog(null);
       return;
     }
 
-    if (paymentMethod === "VA" && !validateVAFields()) {
-      setShowDialog(null); // Close the submit dialog if validation fails
+    if (isCreditNotEnough) {
+      setShowDialog(null);
       return;
     }
 
@@ -112,11 +81,11 @@ export default function PurchaseOrderPage() {
       total_nominal: total,
       remaining_credit: isKredit ? remainingCredit - total : remainingCredit,
       is_for_sale: false,
-      account_no: isKredit ? "" : accountNo,
-      account_bank: isKredit ? "" : accountBank,
-      payment_type: isKredit ? "CAD" : "Virtual Account",
-      payment_method: paymentMethod,
-      va_number: isKredit ? "" : vaNumber,
+      account_no: "",
+      account_bank: isKredit ? "" : paymentMethod,
+      payment_type: isKredit ? paymentType : "Debit",
+      payment_method: isKredit ? paymentType : "Virtual Account",
+      va_number: "",
       timestamp: new Date().toISOString().slice(0, 19).replace("T", " "),
       product_detail: cartItems.map((item) => ({
         sku: item.sku,
@@ -124,27 +93,21 @@ export default function PurchaseOrderPage() {
       })),
     };
 
-    router.post(route("po.store"), {...order}, {
+    router.post(route("po.store"), { ...order }, {
       onSuccess: () => {
         localStorage.removeItem("cart");
         setCartItems([]);
       },
     });
-    console.log("Order submitted:", order);
     setShowDialog(null);
   };
 
-  const areVaFieldsEmpty = paymentMethod === "VA" && (!vaNumber.trim() || !accountBank.trim() || !accountNo.trim());
-  const isSubmitDisabled = isCreditNotEnough || areVaFieldsEmpty;
+  const isSubmitDisabled = isCreditNotEnough || !paymentMethod;
 
   const getTooltipContent = () => {
-    if (isCreditNotEnough) {
-      return "Saldo Kredit Anda Tidak Cukup untuk pesanan ini.";
-    }
-    if (areVaFieldsEmpty) {
-      return "Harap lengkapi detail Virtual Account untuk melanjutkan.";
-    }
-    return ""; // Should not be reached if button is enabled
+    if (!paymentMethod) return "Silakan pilih metode pembayaran terlebih dahulu.";
+    if (isCreditNotEnough) return "Saldo Kredit Anda Tidak Cukup untuk pesanan ini.";
+    return "";
   };
 
   return (
@@ -152,15 +115,14 @@ export default function PurchaseOrderPage() {
       <Head title="Purchase Order" />
 
       <div className="p-4 md:p-6 space-y-6">
-
         <h1 className="text-2xl font-bold text-blue-800">Purchase Order Form</h1>
-        <p className="mb-4 text-sm text-muted-foreground">Transaction ID:TRX-${Date.now()} | Status: {status}</p>
+        <p className="mb-4 text-sm text-muted-foreground">
+          Transaction ID: TRX-{Date.now()} | Status: {status}
+        </p>
 
-        {/* Layout Dua Kolom */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Bagian Kiri */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Merchant Information */}
+            {/* Merchant Info */}
             <Card>
               <CardHeader>
                 <CardTitle>Merchant Information</CardTitle>
@@ -190,89 +152,80 @@ export default function PurchaseOrderPage() {
               <CardHeader>
                 <CardTitle>Payment Details</CardTitle>
               </CardHeader>
-              <CardContent>
-                <Label>Payment Method</Label>
-                <RadioGroup
-                  value={paymentMethod}
-                  onValueChange={setPaymentMethod}
-                  className="flex gap-6 mt-2"
+              <CardContent className="space-y-4">
+                {/* Mandiri */}
+                <div
+                  onClick={() => setPaymentMethod("Mandiri")}
+                  className={`cursor-pointer rounded-xl p-4 flex items-center justify-between border-2 transition-all duration-200 hover:scale-[1.01] hover:shadow-md
+                    ${paymentMethod === "Mandiri" ? "border-yellow-500 bg-yellow-50" : "border-gray-200"}`}
                 >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="VA" id="va" />
-                    <Label htmlFor="va">Bank Virtual Account</Label>
+                  <div className="flex items-center gap-3">
+                    <div className="bg-yellow-400 p-3 rounded-full">
+                      <CreditCard className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-800">Bank Mandiri</h3>
+                      <p className="text-sm text-gray-600">Virtual Account</p>
+                    </div>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="Kredit" id="kredit" />
-                    <Label htmlFor="kredit">Kredit Koperasi</Label>
-                  </div>
-                </RadioGroup>
+                </div>
 
-                {/* Jika pilih Virtual Account */}
-                {paymentMethod === "VA" && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                    <div>
-                      <Label htmlFor="vaNumber">VA Number</Label>
-                      <Input
-                        id="vaNumber"
-                        value={vaNumber}
-                        onChange={(e) => {
-                          setVaNumber(e.target.value);
-                          setValidationErrors((prev) => ({ ...prev, vaNumber: "" }));
-                        }}
-                        placeholder="1234567890"
-                      />
-                      {validationErrors.vaNumber && (
-                        <p className="text-red-500 text-sm mt-1">{validationErrors.vaNumber}</p>
-                      )}
+                {/* BCA */}
+                <div
+                  onClick={() => setPaymentMethod("BCA")}
+                  className={`cursor-pointer rounded-xl p-4 flex items-center justify-between border-2 transition-all duration-200 hover:scale-[1.01] hover:shadow-md
+                    ${paymentMethod === "BCA" ? "border-blue-500 bg-blue-50" : "border-gray-200"}`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="bg-blue-500 p-3 rounded-full">
+                      <CreditCard className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <Label htmlFor="accountBank">Bank</Label>
-                      <Input
-                        id="accountBank"
-                        value={accountBank}
-                        onChange={(e) => {
-                          setAccountBank(e.target.value);
-                          setValidationErrors((prev) => ({ ...prev, accountBank: "" }));
-                        }}
-                        placeholder="BCA / Mandiri"
-                      />
-                      {validationErrors.accountBank && (
-                        <p className="text-red-500 text-sm mt-1">{validationErrors.accountBank}</p>
-                      )}
-                    </div>
-                    <div>
-                      <Label htmlFor="accountNo">Account Number</Label>
-                      <Input
-                        id="accountNo"
-                        value={accountNo}
-                        onChange={(e) => {
-                          setAccountNo(e.target.value);
-                          setValidationErrors((prev) => ({ ...prev, accountNo: "" }));
-                        }}
-                        placeholder="9876543210"
-                      />
-                      {validationErrors.accountNo && (
-                        <p className="text-red-500 text-sm mt-1">{validationErrors.accountNo}</p>
-                      )}
+                      <h3 className="font-semibold text-gray-800">Bank BCA</h3>
+                      <p className="text-sm text-gray-600">Virtual Account</p>
                     </div>
                   </div>
-                )}
+                </div>
 
-                {/* Jika pilih Kredit */}
-                {paymentMethod === "Kredit" && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                    <div>
-                      <Label>Remaining Credit</Label>
-                      <Input value={`Rp ${remainingCredit.toLocaleString()}`} disabled />
+                {/* Kredit Koperasi */}
+                <div
+                  onClick={() => setPaymentMethod("Kredit")}
+                  className={`cursor-pointer rounded-xl p-4 flex flex-col gap-3 border-2 transition-all duration-200 hover:scale-[1.01] hover:shadow-md
+                    ${paymentMethod === "Kredit" ? "border-gray-600 bg-gray-50" : "border-gray-200"}`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="bg-gray-400 p-3 rounded-full">
+                      <Wallet className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <Label>Payment Type</Label>
-                      <Input value="Cash Against Document" disabled />
+                      <h3 className="font-semibold text-gray-800">
+                        Kredit Koperasi Digikoperasi
+                      </h3>
+                      <p className="text-sm text-gray-600">
+                        Remaining Credits: Rp {remainingCredit.toLocaleString()}
+                      </p>
                     </div>
                   </div>
-                )}
+
+                  {paymentMethod === "Kredit" && (
+                    <div className="mt-2">
+                      <Label className="mb-1 block">Pilih Payment Type</Label>
+                      <Select value={paymentType} onValueChange={setPaymentType}>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Pilih jenis pembayaran" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="CAD">Cash Against Document</SelectItem>
+                          <SelectItem value="TOP 30">Term of Payment 30 Hari</SelectItem>
+                          <SelectItem value="TOP 60">Term of Payment 60 Hari</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+                </div>
               </CardContent>
             </Card>
+
             {/* Order Items */}
             <Card>
               <CardHeader>
@@ -312,7 +265,7 @@ export default function PurchaseOrderPage() {
             </Card>
           </div>
 
-          {/* Bagian Kanan */}
+          {/* Order Summary */}
           <div>
             <Card className="sticky top-20">
               <CardHeader>
@@ -342,7 +295,6 @@ export default function PurchaseOrderPage() {
                   </div>
                 )}
 
-                {/* Keterangan Pembayaran */}
                 <div className="mt-4 text-sm text-gray-600 border-t pt-2">
                   {paymentDescription}
                 </div>
@@ -351,13 +303,12 @@ export default function PurchaseOrderPage() {
           </div>
         </div>
 
-        {/* Action Buttons */}
+        {/* Buttons */}
         <div className="flex justify-end gap-3">
           <Button variant="outline" onClick={() => setShowDialog("cancel")}>
             Cancel
           </Button>
 
-          {/* Tooltip for Submit Button */}
           <TooltipProvider>
             <Tooltip delayDuration={200}>
               <TooltipTrigger asChild>
@@ -377,7 +328,7 @@ export default function PurchaseOrderPage() {
         </div>
       </div>
 
-      {/* Dialog Konfirmasi */}
+      {/* Dialog */}
       <Dialog open={!!showDialog} onOpenChange={() => setShowDialog(null)}>
         <DialogContent>
           <DialogHeader>
