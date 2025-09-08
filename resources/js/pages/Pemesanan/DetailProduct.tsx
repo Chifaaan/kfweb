@@ -9,6 +9,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { ShoppingCart, Minus, Plus, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
+import { Link } from '@inertiajs/react';
 
 const MotionButton = motion(Button);
 
@@ -18,7 +19,7 @@ const breadcrumbs: BreadcrumbItem[] = [
   { title: 'Product Detail', href: '#' },
 ];
 
-export default function DetailProduct({ product }: { product: Product }) {
+export default function DetailProduct({ product, relatedProducts }: { product: Product; relatedProducts: Product[] }) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
@@ -286,6 +287,49 @@ export default function DetailProduct({ product }: { product: Product }) {
           </Card>
         </div>
       </div>
+
+      {/* Product Recommendations */}
+      {relatedProducts && relatedProducts.length > 0 && (
+        <div className="py-6 md:py-12 bg-gray-50">
+          <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <h2 className="text-2xl font-bold mb-6">Rekomendasi Produk</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {relatedProducts.map((relatedProduct) => (
+                <Card key={relatedProduct.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                  <div className="relative">
+                    <img
+                      src={relatedProduct.image || '/placeholder.jpg'}
+                      alt={relatedProduct.name}
+                      className="w-full h-48 object-cover"
+                    />
+                    {relatedProduct.category?.main_category && (
+                      <Badge className="absolute top-2 right-2">
+                        {relatedProduct.category.main_category}
+                      </Badge>
+                    )}
+                  </div>
+                  <CardContent className="p-4">
+                    <h3 className="font-semibold text-lg mb-2 truncate">{relatedProduct.name}</h3>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      {relatedProduct.content} {relatedProduct.base_uom} / {relatedProduct.order_unit}
+                    </p>
+                    <div className="flex items-center justify-between mt-4">
+                      <p className="text-lg font-bold text-primary">
+                        Rp {relatedProduct.price.toLocaleString('id-ID')}
+                      </p>
+                      <Button asChild size="sm">
+                        <Link href={route('medicines.show', { id: relatedProduct.id })}>
+                          Detail
+                        </Link>
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Floating Cart */}
       <FloatingCart totalItems={totalItems} animationTrigger={animationTrigger} />

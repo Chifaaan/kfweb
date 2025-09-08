@@ -5,9 +5,10 @@ import { NavigationMenu, NavigationMenuItem, NavigationMenuList, navigationMenuT
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
-import { type BreadcrumbItem, type NavItem, type SharedData } from '@/types';
+import { type BreadcrumbItem, type NavItem, type SharedData, type CartItem } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { History, Menu, Search, ShoppingCart } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import AppLogo from './app-logo';
 import AppLogoIcon from './app-logo-icon';
 
@@ -37,6 +38,49 @@ interface AppHeaderProps {
 
 export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
     const page = usePage<SharedData>();
+    const [cartItems, setCartItems] = useState<CartItem[]>([]);
+    const [animateBadge, setAnimateBadge] = useState(false);
+
+    // Load cart items from localStorage
+    useEffect(() => {
+        const loadCartItems = () => {
+            try {
+                const storedCart = localStorage.getItem('cart');
+                if (storedCart) {
+                    setCartItems(JSON.parse(storedCart));
+                }
+            } catch (error) {
+                console.error('Error loading cart from localStorage:', error);
+                setCartItems([]);
+            }
+        };
+
+        loadCartItems();
+
+        // Listen for storage changes (when cart is updated in other tabs/components)
+        const handleStorageChange = (e: StorageEvent) => {
+            if (e.key === 'cart') {
+                loadCartItems();
+                // Trigger animation when cart is updated
+                setAnimateBadge(true);
+                setTimeout(() => setAnimateBadge(false), 300);
+            }
+        };
+
+        window.addEventListener('storage', handleStorageChange);
+        return () => window.removeEventListener('storage', handleStorageChange);
+    }, []);
+
+    // Trigger animation when cart items change from 0 to >0
+    useEffect(() => {
+        if (cartItems.length > 0 && cartItems.some(item => item.quantity > 0)) {
+            setAnimateBadge(true);
+            setTimeout(() => setAnimateBadge(false), 300);
+        }
+    }, [cartItems]);
+
+    // Calculate total items in cart
+    const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
 
     return (
         <>
@@ -116,14 +160,18 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                         {/* Cart Button - visible on mobile */}
                         <div className="flex lg:hidden">
                             {rightNavItems.map((item) => (
-                                <Link
-                                    key={item.title}
-                                    href={item.href}
-                                    className="group ml-1 inline-flex h-9 w-9 items-center justify-center rounded-md bg-transparent p-0 text-sm font-medium text-accent-foreground ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
-                                >
-                                    <span className="sr-only">{item.title}</span>
-                                    {item.icon && <Icon iconNode={item.icon} className="size-5 opacity-80 group-hover:opacity-100" />}
-                                </Link>
+                                <div key={item.title} className="relative">
+                                    <Link
+                                        href={item.href}
+                                        className="group ml-1 inline-flex h-9 w-9 items-center justify-center rounded-md bg-transparent p-0 text-sm font-medium text-accent-foreground ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+                                    >
+                                        <span className="sr-only">{item.title}</span>
+                                        {item.icon && <Icon iconNode={item.icon} className="size-5 opacity-80 group-hover:opacity-100" />}
+                                    </Link>
+                                    {totalItems > 0 && (
+                                        <span className={`absolute -top-0.5 -right-0.5 flex h-3 w-3 items-center justify-center rounded-full bg-red-500 text-white transition-all duration-300 ${animateBadge ? 'scale-125' : 'scale-100'}`} />
+                                    )}
+                                </div>
                             ))}
                         </div>
 
@@ -132,14 +180,19 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                             {rightNavItems.map((item) => (
                                 <TooltipProvider key={item.title} delayDuration={0}>
                                     <Tooltip>
-                                        <TooltipTrigger>
-                                            <Link
-                                                href={item.href}
-                                                className="group ml-1 inline-flex h-9 w-9 items-center justify-center rounded-md bg-transparent p-0 text-sm font-medium text-accent-foreground ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
-                                            >
-                                                <span className="sr-only">{item.title}</span>
-                                                {item.icon && <Icon iconNode={item.icon} className="size-5 opacity-80 group-hover:opacity-100" />}
-                                            </Link>
+                                        <TooltipTrigger asChild>
+                                            <div className="relative">
+                                                <Link
+                                                    href={item.href}
+                                                    className="group ml-1 inline-flex h-9 w-9 items-center justify-center rounded-md bg-transparent p-0 text-sm font-medium text-accent-foreground ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+                                                >
+                                                    <span className="sr-only">{item.title}</span>
+                                                    {item.icon && <Icon iconNode={item.icon} className="size-5 opacity-80 group-hover:opacity-100" />}
+                                                </Link>
+                                                {totalItems > 0 && (
+                                                    <span className={`absolute -top-0.5 -right-0.5 flex h-3 w-3 items-center justify-center rounded-full bg-red-500 text-xs text-white transition-all duration-300 ${animateBadge ? 'scale-125' : 'scale-100'}`} />
+                                                )}
+                                            </div>
                                         </TooltipTrigger>
                                         <TooltipContent>
                                             <p>{item.title}</p>

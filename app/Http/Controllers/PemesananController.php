@@ -41,9 +41,17 @@ class PemesananController extends Controller
         // Eager load the category relationship and fetch the full product model.
         // $product = Product::with('category:id,main_category')->findOrFail($id);
         // dd($product->id);
+        
+        // Fetch related products from the same category (limit to 4)
+        $relatedProducts = Product::with('category:id,main_category')
+            ->where('category_id', $product->category_id)
+            ->where('id', '!=', $product->id) // Exclude the current product
+            ->limit(4)
+            ->get(['id', 'sku', 'name', 'price', 'image', 'category_id', 'order_unit', 'is_active', 'content', 'base_uom', 'weight']);
 
         return Inertia::render('Pemesanan/DetailProduct', [
             'product' => $product,
+            'relatedProducts' => $relatedProducts,
         ]);
     }
 
