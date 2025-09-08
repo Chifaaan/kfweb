@@ -5,6 +5,7 @@ use App\Http\Controllers\PemesananController;
 use App\Http\Controllers\PenerimaanController;
 use App\Http\Controllers\PurchaseOrderController;
 use Illuminate\Support\Facades\Route;
+use App\Models\Product;
 use Inertia\Inertia;
 
 Route::get('/', function () {
@@ -15,6 +16,13 @@ Route::get('dashboard', function () {
     return Inertia::render('dashboard');
 })->name('dashboard');
 
+Route::get('/dashboard', function () {
+    $products = Product::where('is_active', true)->get();
+
+    return Inertia::render('dashboard', [
+        'products' => $products
+    ]);
+});
 
     Route::get('pemesanan/medicines', [PemesananController::class, 'index'])->name('medicines');
     Route::get('pemesanan/medicines/{product}', [PemesananController::class, 'show'])->name('medicines.show');

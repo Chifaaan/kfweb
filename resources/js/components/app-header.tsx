@@ -7,16 +7,17 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { cn } from '@/lib/utils';
 import { type BreadcrumbItem, type NavItem, type SharedData, type CartItem } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { History, Menu, Search, ShoppingCart } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { History, Menu, Search, ShoppingCart, Pill } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
 import AppLogo from './app-logo';
 import AppLogoIcon from './app-logo-icon';
+import Fuse from "fuse.js";
 
 const sections = [
     {
         title: "Pemesanan",
         items: [
-            { title: "Medicines", href: "/pemesanan/medicines", icon: ShoppingCart },
+            { title: "Medicines", href: "/pemesanan/medicines", icon: Pill },
             { title: "Orders History", href: "/pemesanan/history", icon: History },
         ],
     },
@@ -41,6 +42,48 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
     const [cartItems, setCartItems] = useState<CartItem[]>([]);
     const [animateBadge, setAnimateBadge] = useState(false);
 
+    // === Search Update ===
+    const [searchQuery, setSearchQuery] = useState('');
+const [searchResults, setSearchResults] = useState<{ id: number; name: string }[]>([]);
+const [showResults, setShowResults] = useState(false);
+const searchRef = useRef<HTMLDivElement>(null);
+
+const products = [
+  { id: 1, name: "Paracetamol", category: "Obat" },
+  { id: 2, name: "Amoxicillin", category: "Antibiotik" },
+  { id: 3, name: "Ibuprofen", category: "Obat nyeri" },
+  { id: 4, name: "Vitamin C", category: "Suplemen" },
+  { id: 5, name: "Tissue Basah", category: "Kebersihan" },
+];
+
+useEffect(() => {
+  if (searchQuery.trim().length > 0) {
+    const fuse = new Fuse(products, {
+      keys: ["name", "category"], // bisa cari berdasarkan nama & kategori
+      threshold: 0.4,             // semakin kecil makin ketat, 0.4 cukup longgar
+    });
+
+    const results = fuse.search(searchQuery).map(res => res.item);
+
+    setSearchResults(results);
+    setShowResults(true);
+  } else {
+    setSearchResults([]);
+    setShowResults(false);
+  }
+}, [searchQuery]);
+
+    // Tutup dropdown kalau klik di luar
+    useEffect(() => {
+        const handleClickOutside = (e: MouseEvent) => {
+            if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+                setShowResults(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
     // Load cart items from localStorage
     useEffect(() => {
         const loadCartItems = () => {
@@ -57,11 +100,9 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
 
         loadCartItems();
 
-        // Listen for storage changes (when cart is updated in other tabs/components)
         const handleStorageChange = (e: StorageEvent) => {
             if (e.key === 'cart') {
                 loadCartItems();
-                // Trigger animation when cart is updated
                 setAnimateBadge(true);
                 setTimeout(() => setAnimateBadge(false), 300);
             }
@@ -71,7 +112,6 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
         return () => window.removeEventListener('storage', handleStorageChange);
     }, []);
 
-    // Trigger animation when cart items change from 0 to >0
     useEffect(() => {
         if (cartItems.length > 0 && cartItems.some(item => item.quantity > 0)) {
             setAnimateBadge(true);
@@ -79,13 +119,13 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
         }
     }, [cartItems]);
 
-    // Calculate total items in cart
     const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
 
     return (
         <>
             <div className="border-b border-sidebar-border/80">
                 <div className="mx-auto flex h-16 items-center px-4 md:max-w-7xl">
+                    
                     {/* Mobile Menu */}
                     <div className="lg:hidden">
                         <Sheet>
@@ -100,7 +140,6 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                     <AppLogoIcon className="h-6 w-6 fill-current text-black dark:text-white" />
                                 </SheetHeader>
 
-                                {/* Centered Mobile Navigation */}
                                 <div className="flex h-full flex-1 flex-col items-center justify-center space-y-6 p-4">
                                     {sections.map((section) => (
                                         <div key={section.title} className="flex flex-col items-center space-y-2">
@@ -125,8 +164,8 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
 
                     {/* Desktop Navigation */}
                     <div className="ml-6 hidden h-full items-center space-x-6 lg:flex">
-                        <NavigationMenu className="flex h-full items-center justify-center"> {/* Added justify-center */}
-                            <NavigationMenuList className="flex h-full items-center justify-center space-x-2"> {/* Added justify-center */}
+                        <NavigationMenu className="flex h-full items-center justify-center">
+                            <NavigationMenuList className="flex h-full items-center justify-center space-x-2">
                                 {sections.flatMap((section) =>
                                     section.items.map((item) => (
                                         <NavigationMenuItem key={item.href} className="relative flex h-full items-center">
@@ -153,9 +192,40 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
 
                     {/* Right side */}
                     <div className="ml-auto flex items-center space-x-2">
-                        <Button variant="ghost" size="icon" className="group h-9 w-9 cursor-pointer">
-                            <Search className="!size-5 opacity-80 group-hover:opacity-100" />
-                        </Button>
+
+                        {/* === Search Update === */}
+                        <div className="relative w-48 md:w-72" ref={searchRef}>
+                            <div className="flex items-center rounded-md border border-neutral-300 bg-white px-2 dark:bg-neutral-800 dark:border-neutral-700">
+                                <Search className="mr-2 h-4 w-4 text-neutral-400" />
+                                <input
+                                    type="text"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    placeholder="Cari produk..."
+                                    className="w-full bg-transparent py-1 text-sm text-neutral-900 placeholder-neutral-400 focus:outline-none dark:text-white"
+                                />
+                            </div>
+
+                            {showResults && (
+                                <div className="absolute top-11 left-0 w-full rounded-md border bg-white shadow-md dark:bg-neutral-900 dark:border-neutral-700 z-50">
+                                    {searchResults.length > 0 ? (
+                                        searchResults.map((product) => (
+                                            <Link
+                                                key={product.id}
+                                                href={`/produk/${product.id}`}
+                                                className="block px-4 py-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                                            >
+                                                {product.name}
+                                            </Link>
+                                        ))
+                                    ) : (
+                                        <p className="px-4 py-2 text-sm text-neutral-500 dark:text-neutral-400">
+                                            Produk tidak ditemukan
+                                        </p>
+                                    )}
+                                </div>
+                            )}
+                        </div>
 
                         {/* Cart Button - visible on mobile */}
                         <div className="flex lg:hidden">

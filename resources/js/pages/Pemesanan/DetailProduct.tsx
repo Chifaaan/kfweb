@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { Link } from '@inertiajs/react';
 
+
 const MotionButton = motion(Button);
 
 const breadcrumbs: BreadcrumbItem[] = [
