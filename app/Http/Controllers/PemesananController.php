@@ -36,10 +36,11 @@ class PemesananController extends Controller
      * for the product. This is better for a detail page as it ensures all product
      * data is available to the frontend and is easier to maintain.
      */
-    public function show($id)
+    public function show(Product $product)
     {
         // Eager load the category relationship and fetch the full product model.
-        $product = Product::with('category:id,main_category')->findOrFail($id);
+        // $product = Product::with('category:id,main_category')->findOrFail($id);
+        // dd($product->id);
 
         return Inertia::render('Pemesanan/DetailProduct', [
             'product' => $product,

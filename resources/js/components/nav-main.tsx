@@ -1,5 +1,5 @@
 import { SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
-import { type NavItem, NavSection } from '@/types';
+import { type NavSection } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 
 export function NavMain({ sections = [] }: { sections: NavSection[] }) {

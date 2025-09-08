@@ -84,7 +84,7 @@ export default function PurchaseOrderPage() {
       account_no: "",
       account_bank: isKredit ? "" : paymentMethod,
       payment_type: isKredit ? paymentType : "Debit",
-      payment_method: isKredit ? paymentType : "Virtual Account",
+      payment_method: isKredit ? paymentMethod : "Virtual Account",
       va_number: "",
       timestamp: new Date().toISOString().slice(0, 19).replace("T", " "),
       product_detail: cartItems.map((item) => ({
