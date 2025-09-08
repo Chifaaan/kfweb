@@ -10,6 +10,8 @@ import { ShoppingCart, Minus, Plus, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { Link } from '@inertiajs/react';
+import { ProductRecommendationCard } from '@/components/ProductRecommendationCard';
+import ProductCard from "@/components/ProductCard";
 
 
 const MotionButton = motion(Button);
@@ -67,7 +69,7 @@ export default function DetailProduct({ product, relatedProducts }: { product: P
   const handleQuantityChange = (amount: number) => {
     setQuantity((prev) => Math.max(1, prev + amount));
   };
-  
+
   const handleAddToCartClick = () => {
     if (isAdded) return;
     addToCart(product, quantity);
@@ -157,12 +159,12 @@ export default function DetailProduct({ product, relatedProducts }: { product: P
                     </div>
 
                   </div>
-                  
+
                   <div className="mt-8 border-t border-border">
-                    <Accordion 
-                      type="single" 
-                      collapsible 
-                      className="w-full pt-2" 
+                    <Accordion
+                      type="single"
+                      collapsible
+                      className="w-full pt-2"
                       defaultValue="description"
                     >
                       <AccordionItem value="description">
@@ -173,7 +175,7 @@ export default function DetailProduct({ product, relatedProducts }: { product: P
                           </p>
                         </AccordionContent>
                       </AccordionItem>
-                      
+
                       {/* Pharmacology Information */}
                       <AccordionItem value="pharmacology">
                         <AccordionTrigger>Farmakologi</AccordionTrigger>
@@ -182,7 +184,7 @@ export default function DetailProduct({ product, relatedProducts }: { product: P
                             let pharmacologyData: string[] = [];
                               if (typeof product.pharmacology === "string" && product.pharmacology.startsWith("[")) {
                                 pharmacologyData = JSON.parse(product.pharmacology);
-                              } 
+                              }
                             if (pharmacologyData.length > 0) {
                               return (
                                 <ul className="list-disc pl-5 space-y-1 text-sm text-muted-foreground">
@@ -213,8 +215,8 @@ export default function DetailProduct({ product, relatedProducts }: { product: P
 
                             if (typeof product.dosage === "string" && product.dosage.startsWith("{")) {
                               dosageData = JSON.parse(product.dosage);
-                            } 
-                          
+                            }
+
                             const dosageEntries = Object.entries(dosageData);
 
                             if (dosageEntries.length > 0) {
@@ -239,7 +241,7 @@ export default function DetailProduct({ product, relatedProducts }: { product: P
                           })()}
                         </AccordionContent>
                       </AccordionItem>
-                      
+
                       {/*Informasi Kemasan*/}
                       <AccordionItem value="packaging">
                         <AccordionTrigger>Informasi Kemasan</AccordionTrigger>
@@ -272,8 +274,8 @@ export default function DetailProduct({ product, relatedProducts }: { product: P
                             <div className="flex justify-between">
                               <span className="text-muted-foreground">Dimensi Kemasan:</span>
                               <span className="font-semibold text-foreground">
-                                {product.length && product.width && product.height 
-                                  ? `${product.length} x ${product.width} x ${product.height} cm` 
+                                {product.length && product.width && product.height
+                                  ? `${product.length} x ${product.width} x ${product.height} cm`
                                   : '-'}
                               </span>
                             </div>
@@ -289,48 +291,24 @@ export default function DetailProduct({ product, relatedProducts }: { product: P
         </div>
       </div>
 
-      {/* Product Recommendations */}
-      {relatedProducts && relatedProducts.length > 0 && (
-        <div className="py-6 md:py-12 bg-gray-50">
-          <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <h2 className="text-2xl font-bold mb-6">Rekomendasi Produk</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {relatedProducts.map((relatedProduct) => (
-                <Card key={relatedProduct.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                  <div className="relative">
-                    <img
-                      src={relatedProduct.image || '/placeholder.jpg'}
-                      alt={relatedProduct.name}
-                      className="w-full h-48 object-cover"
-                    />
-                    {relatedProduct.category?.main_category && (
-                      <Badge className="absolute top-2 right-2">
-                        {relatedProduct.category.main_category}
-                      </Badge>
-                    )}
-                  </div>
-                  <CardContent className="p-4">
-                    <h3 className="font-semibold text-lg mb-2 truncate">{relatedProduct.name}</h3>
-                    <p className="text-sm text-muted-foreground mb-2">
-                      {relatedProduct.content} {relatedProduct.base_uom} / {relatedProduct.order_unit}
-                    </p>
-                    <div className="flex items-center justify-between mt-4">
-                      <p className="text-lg font-bold text-primary">
-                        Rp {relatedProduct.price.toLocaleString('id-ID')}
-                      </p>
-                      <Button asChild size="sm">
-                        <Link href={route('medicines.show', { id: relatedProduct.id })}>
-                          Detail
-                        </Link>
-                      </Button>
+        {/* Product Recommendations */}
+        {relatedProducts && relatedProducts.length > 0 && (
+            <div className="py-6 md:py-12 bg-gray-50">
+                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                    <h2 className="text-2xl font-bold mb-6">Rekomendasi Produk</h2>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                        {relatedProducts.map((relatedProduct) => (
+                            <ProductCard
+                                key={relatedProduct.id}
+                                product={relatedProduct}
+                                addToCart={(p: Product) => addToCart(p, 1)}
+                                compact={true}
+                            />
+                        ))}
                     </div>
-                  </CardContent>
-                </Card>
-              ))}
+                </div>
             </div>
-          </div>
-        </div>
-      )}
+        )}
 
       {/* Floating Cart */}
       <FloatingCart totalItems={totalItems} animationTrigger={animationTrigger} />
