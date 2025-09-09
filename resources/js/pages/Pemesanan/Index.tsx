@@ -43,6 +43,11 @@ interface Props {
 export default function Index({ products, categories, packages, orderUnits, filters }: Props) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [animationTrigger, setAnimationTrigger] = useState(0);
+  const [query, setQuery] = useState(filters);
+
+  useEffect(() => {
+    setQuery(filters);
+  }, [filters]);
 
   // 🔹 jumlah jenis produk unik
   const totalItems = cart.length;
@@ -77,7 +82,10 @@ export default function Index({ products, categories, packages, orderUnits, filt
 
   // 🔹 Event handler filter
   const handleFilterChange = (filterData: { category?: string; package?: string; orderUnit?: string; search?: string }) => {
-    router.get("/pemesanan", filterData, {
+    const newQuery = { ...query, ...filterData };
+    setQuery(newQuery);
+
+    router.get("medicines", newQuery, {
       preserveState: true,
       preserveScroll: true,
     });
@@ -85,7 +93,10 @@ export default function Index({ products, categories, packages, orderUnits, filt
 
   // 🔹 Event handler sorting
   const handleSortChange = (sortValue: string) => {
-    router.get("/pemesanan", { ...filters, sort: sortValue }, {
+    const newQuery = { ...query, sort: sortValue };
+    setQuery(newQuery);
+
+    router.get("medicines", newQuery, {
       preserveState: true,
       preserveScroll: true,
     });
@@ -130,7 +141,8 @@ export default function Index({ products, categories, packages, orderUnits, filt
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="Medicines" />
-      <div className="flex flex-col lg:flex-row gap-8 px-4 sm:px-6 lg:px-8 py-6">
+      <h1 className="text-2xl font-bold pt-6 ml-6 lg:ml-9  text-blue-800">Medicine Catalog</h1>
+      <div className="flex flex-col lg:flex-row gap-8 px-4 sm:px-6 lg:px-8 py-3">
         {/* Sidebar Filters */}
         <div className="lg:w-1/4 w-full">
           <Filters 
@@ -143,26 +155,25 @@ export default function Index({ products, categories, packages, orderUnits, filt
 
         {/* Product Section */}
         <div className="flex-1">
-          <h1 className="text-2xl font-bold mb-4 text-blue-800">Medicine Catalog</h1>
+          
 
           <div className="flex flex-col sm:flex-row justify-between gap-2 mb-4">
             <input
               type="text"
               placeholder="Search Products..."
               className="w-full sm:w-1/2 border px-3 py-2 rounded-md"
-              defaultValue={filters.search || ""}
+              defaultValue={query.search || ""}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
-                  handleFilterChange({ ...filters, search: (e.target as HTMLInputElement).value });
+                  handleFilterChange({ search: (e.target as HTMLInputElement).value });
                 }
               }}
             />
-
-            <Select value={filters.sort || "name-asc"} onValueChange={handleSortChange}>
+            <Select value={query.sort || "name-asc"} onValueChange={handleSortChange}>
               <SelectTrigger className="w-[200px]">
                 <SelectValue placeholder="Sort Products" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent >
                 <SelectItem value="name-asc">A → Z</SelectItem>
                 <SelectItem value="name-desc">Z → A</SelectItem>
                 <SelectItem value="lowest">Lowest Price</SelectItem>

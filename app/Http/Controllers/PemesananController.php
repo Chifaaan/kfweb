@@ -49,6 +49,30 @@ public function index(Request $request)
         });
     }
 
+    // 🔀 Sorting
+    if ($request->filled('sort')) {
+        switch ($request->sort) {
+            case 'name-asc':
+                $query->orderBy('name', 'asc');
+                break;
+            case 'name-desc':
+                $query->orderBy('name', 'desc');
+                break;
+            case 'lowest':
+                $query->orderBy('price', 'asc');
+                break;
+            case 'highest':
+                $query->orderBy('price', 'desc');
+                break;
+            default:
+                $query->orderBy('name', 'asc');
+                break;
+        }
+    } else {
+        // Default sorting
+        $query->orderBy('name', 'asc');
+    }
+
     // 📄 Pagination (12 produk per halaman, bisa disesuaikan)
     $products = $query->paginate(12)->withQueryString();
 
@@ -62,7 +86,7 @@ public function index(Request $request)
         'categories' => $categories,
         'packages' => $packages,
         'orderUnits' => $orderUnits,
-        'filters' => $request->only(['category', 'package', 'orderUnit', 'search']),
+        'filters' => $request->only(['categories', 'packages', 'orderUnits', 'search', 'sort']),
     ]);
 }
 
