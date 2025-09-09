@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import AppLayout from "@/layouts/app-layout";
 import { type BreadcrumbItem, } from "@/types";
-import { Head, usePage } from "@inertiajs/react";
+import { Head } from "@inertiajs/react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import Autoplay from "embla-carousel-autoplay";
@@ -50,7 +50,7 @@ const categoryMap: Record<number, string> = {
 // Kategori cards untuk hero section
 const categoryCards = [
   { name: "Obat", desc: "Resep & Bebas Terlengkap", icon: Pill, gradient: "from-blue-600 to-blue-800" },
-  { name: "Vitamin", desc: "Suplemen Premium Import", icon: HeartPulse, gradient: "from-emerald-600 to-emerald-800" },
+  { name: "Vitamin & Suplemen", desc: "Suplemen Premium Import", icon: HeartPulse, gradient: "from-emerald-600 to-emerald-800" },
   { name: "Perawatan Tubuh", desc: "Kesehatan Preventif Terbaik", icon: Syringe, gradient: "from-rose-600 to-rose-800" },
 ];
 
@@ -104,7 +104,11 @@ export default function Dashboard({ products }: Props) {
           </motion.div>
 
           {/* Kategori Cards */}
-          <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.3 }}>
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+          >
             <div className="text-center mb-8">
               <h2 className="text-3xl font-bold text-slate-800 mb-2">Kategori Pilihan</h2>
               <p className="text-slate-600">Pilihan terbaik untuk kesehatan keluarga Anda</p>
@@ -112,17 +116,30 @@ export default function Dashboard({ products }: Props) {
             <div className="flex justify-center">
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 justify-items-center max-w-6xl w-full">
                 {categoryCards.map((cat, idx) => (
-                  <motion.div key={idx} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 * idx }} whileHover={{ y: -8, scale: 1.05 }} className="w-full max-w-xs">
-                    <Card className="relative overflow-hidden rounded-3xl border-0 shadow-xl hover:shadow-2xl group transition-all duration-500">
-                      <div className={`absolute inset-0 bg-gradient-to-br ${cat.gradient} opacity-90`}></div>
-                      <CardContent className="relative z-10 flex flex-col items-center justify-center text-center p-8 text-white">
-                        <div className="bg-white/20 backdrop-blur-sm p-4 rounded-2xl mb-4 group-hover:scale-110 transition-transform duration-300">
-                          <cat.icon className="w-8 h-8"/>
-                        </div>
-                        <h3 className="font-bold text-lg mb-2">{cat.name}</h3>
-                        <p className="text-sm text-white/80">{cat.desc}</p>
-                      </CardContent>
-                    </Card>
+                  <motion.div
+                    key={idx}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.1 * idx }}
+                    whileHover={{ y: -8, scale: 1.05 }}
+                    className="w-full max-w-xs"
+                  >
+                    <Link
+                      href={route("medicines", {
+                        categories: cat.name, // ← ini sesuai dengan Filters
+                      })}
+                    >
+                      <Card className="relative overflow-hidden rounded-3xl border-0 shadow-xl hover:shadow-2xl group transition-all duration-500">
+                        <div className={`absolute inset-0 bg-gradient-to-br ${cat.gradient} opacity-90`}></div>
+                        <CardContent className="relative z-10 flex flex-col items-center justify-center text-center p-8 text-white">
+                          <div className="bg-white/20 backdrop-blur-sm p-4 rounded-2xl mb-4 group-hover:scale-110 transition-transform duration-300">
+                            <cat.icon className="w-8 h-8" />
+                          </div>
+                          <h3 className="font-bold text-lg mb-2">{cat.name}</h3>
+                          <p className="text-sm text-white/80">{cat.desc}</p>
+                        </CardContent>
+                      </Card>
+                    </Link>
                   </motion.div>
                 ))}
               </div>

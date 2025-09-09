@@ -1,15 +1,22 @@
 import React, { useState, useEffect } from "react";
-import PropTypes from 'prop-types'; // Import PropTypes
+import PropTypes from "prop-types";
+import { router } from "@inertiajs/react";
 
-export default function Filters({ onFilterChange, categories: propCategories, packages: propPackages, orderUnits: propOrderUnits }) {
-  const [selectedCategories, setSelectedCategories] = useState([]);
-  const [selectedPackages, setSelectedPackages] = useState([]);
-  const [selectedOrderUnits, setSelectedOrderUnits] = useState([]);
+export default function Filters({
+  onFilterChange,
+  categories: propCategories,
+  packages: propPackages,
+  orderUnits: propOrderUnits,
+}) {
+  const urlParams = new URLSearchParams(window.location.search);
 
-  // Use the props directly for the filter options
-  const categories = propCategories;
-  const packages = propPackages;
-  const orderUnits = propOrderUnits;
+  const initialCategories = urlParams.getAll("categories");
+  const initialPackages = urlParams.getAll("packages");
+  const initialOrderUnits = urlParams.getAll("orderUnits");
+
+  const [selectedCategories, setSelectedCategories] = useState(initialCategories);
+  const [selectedPackages, setSelectedPackages] = useState(initialPackages);
+  const [selectedOrderUnits, setSelectedOrderUnits] = useState(initialOrderUnits);
 
   // toggle category
   const toggleCategory = (cat) => {
@@ -46,13 +53,20 @@ export default function Filters({ onFilterChange, categories: propCategories, pa
   };
 
   // kirim ke parent setiap kali filter berubah
-  useEffect(() => {
-    onFilterChange({
+useEffect(() => {
+  router.get(
+    route("medicines"), 
+    {
       categories: selectedCategories,
       packages: selectedPackages,
       orderUnits: selectedOrderUnits,
-    });
-  }, [selectedCategories, selectedPackages, selectedOrderUnits, onFilterChange]); // Add onFilterChange to dependency array
+    },
+    {
+      preserveState: true,
+      replace: true,
+    }
+  );
+}, [selectedCategories, selectedPackages, selectedOrderUnits]);
 
   return (
     <div className="lg:w-64 w-full p-4 border rounded-lg shadow-sm bg-card text-card-foreground">
@@ -70,7 +84,7 @@ export default function Filters({ onFilterChange, categories: propCategories, pa
       <div className="mb-4">
         <h3 className="font-semibold mb-2">Categories</h3>
         <ul className="space-y-1">
-          {categories.map((cat) => (
+          {propCategories.map((cat) => (
             <li key={cat}>
               <label className="flex items-center gap-2">
                 <input
@@ -89,7 +103,7 @@ export default function Filters({ onFilterChange, categories: propCategories, pa
       <div className="mb-4">
         <h3 className="font-semibold mb-2">Packaging</h3>
         <ul className="space-y-1">
-          {packages.map((pack) => (
+          {propPackages.map((pack) => (
             <li key={pack}>
               <label className="flex items-center gap-2">
                 <input
@@ -108,7 +122,7 @@ export default function Filters({ onFilterChange, categories: propCategories, pa
       <div className="mb-4">
         <h3 className="font-semibold mb-2">Order Units</h3>
         <ul className="space-y-1">
-          {orderUnits.map((unit) => (
+          {propOrderUnits.map((unit) => (
             <li key={unit}>
               <label className="flex items-center gap-2">
                 <input
@@ -136,7 +150,6 @@ export default function Filters({ onFilterChange, categories: propCategories, pa
   );
 }
 
-// Add PropTypes for better type checking and documentation
 Filters.propTypes = {
   onFilterChange: PropTypes.func.isRequired,
   categories: PropTypes.arrayOf(PropTypes.string).isRequired,

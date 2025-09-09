@@ -1,41 +1,47 @@
 import AppLayout from '@/layouts/app-layout';
 import { CartItem, Product, type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
-import Filters from "@/components/Filters";
-import ProductCard from "@/components/ProductCard";
+import { Head, router } from '@inertiajs/react';
+import Filters from "@/components/Filters.jsx";
+import ProductCard from "@/components/ProductCard.jsx";
 import FloatingCart from '@/components/FloatingCart';
 import { useState, useEffect } from "react";
 import { ShoppingCart } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationPrevious,
+  PaginationNext,
+  PaginationEllipsis,
+} from "@/components/ui/pagination";
 
 const breadcrumbs: BreadcrumbItem[] = [
   { title: 'Dashboard', href: '/dashboard' },
-  { title: 'Medicines', href: '/pemesanan/medicines'},
+  { title: 'Medicines', href: '/pemesanan'},
 ];
 
 interface Props {
-  products: Product[];
-  categories: string[];
-  packages: string[];
-  orderUnits: string[]; // Add orderUnits to Props
-}
-
-interface FilterState {
+  products: {
+    data: Product[];
+    links: { url: string | null; label: string; active: boolean }[];
+    meta: { current_page: number; last_page: number; total: number };
+  };
   categories: string[];
   packages: string[];
   orderUnits: string[];
+  filters: {
+    category?: string;
+    package?: string;
+    orderUnit?: string;
+    search?: string;
+    sort?: string;
+  };
 }
 
-export default function Index({ products, categories, packages, orderUnits }: Props) {
-  const [search, setSearch] = useState("");
-  const [sortBy, setSortBy] = useState("name-asc");
-  const [filters, setFilters] = useState<FilterState>({
-    categories: [],
-    packages: [],
-    orderUnits: []
-  });
+export default function Index({ products, categories, packages, orderUnits, filters }: Props) {
   const [cart, setCart] = useState<CartItem[]>([]);
-  const [, setSelectedProduct] = useState<Product | null>(null);
   const [animationTrigger, setAnimationTrigger] = useState(0);
 
   // 🔹 jumlah jenis produk unik
@@ -69,41 +75,57 @@ export default function Index({ products, categories, packages, orderUnits }: Pr
     setAnimationTrigger(prev => prev + 1);
   };
 
-  // 🔹 filter berdasarkan search
-  let filteredProducts = products.filter((p) =>
-    p.name.toLowerCase().includes(search.toLowerCase())
-  );
-
-  // ambil filter aktif
-  const activeCategories = filters.categories.filter((c) => c !== "Semua Produk");
-  const activePackages = filters.packages.filter((p) => p !== "Semua Package");
-  const activeOrderUnits = filters.orderUnits.filter((u) => u !== "Semua Unit");
-  // 🔹 filter kategori & package
-  if (!(activeCategories.length === 0 && activePackages.length === 0 && activeOrderUnits.length === 0)) {
-    filteredProducts = filteredProducts.filter((p) => {
-      const matchCategory =
-        activeCategories.length === 0 || activeCategories.includes(String(p.category?.main_category));
-
-      const matchPackage =
-        activePackages.length === 0 || activePackages.includes(p.base_uom);
-
-      const matchOrderUnit =
-        activeOrderUnits.length === 0 || activeOrderUnits.includes(p.order_unit);
-
-      return matchCategory && matchPackage && matchOrderUnit;
+  // 🔹 Event handler filter
+  const handleFilterChange = (filterData: { category?: string; package?: string; orderUnit?: string; search?: string }) => {
+    router.get("/pemesanan", filterData, {
+      preserveState: true,
+      preserveScroll: true,
     });
-  }
+  };
 
-  // 🔹 sorting
-  if (sortBy === "lowest") {
-    filteredProducts = [...filteredProducts].sort((a, b) => a.price - b.price);
-  } else if (sortBy === "highest") {
-    filteredProducts = [...filteredProducts].sort((a, b) => b.price - a.price);
-  } else if (sortBy === "name-asc") {
-    filteredProducts = [...filteredProducts].sort((a, b) => a.name.localeCompare(b.name));
-  } else if (sortBy === "name-desc") {
-    filteredProducts = [...filteredProducts].sort((a, b) => b.name.localeCompare(a.name));
-  }
+  // 🔹 Event handler sorting
+  const handleSortChange = (sortValue: string) => {
+    router.get("/pemesanan", { ...filters, sort: sortValue }, {
+      preserveState: true,
+      preserveScroll: true,
+    });
+  };
+
+  // 🔹 Render pagination items
+  const renderPaginationItems = () => {
+    return products.links.map((link, index) => {
+      if (link.label.includes('Previous')) {
+        return (
+          <PaginationItem key={index}>
+            <PaginationPrevious href={link.url || '#'} />
+          </PaginationItem>
+        );
+      } else if (link.label.includes('Next')) {
+        return (
+          <PaginationItem key={index}>
+            <PaginationNext href={link.url || '#'} />
+          </PaginationItem>
+        );
+      } else if (link.label === '...') {
+        return (
+          <PaginationItem key={index}>
+            <PaginationEllipsis />
+          </PaginationItem>
+        );
+      } else {
+        return (
+          <PaginationItem key={index}>
+            <PaginationLink 
+              href={link.url || '#'} 
+              isActive={link.active}
+            >
+              {link.label}
+            </PaginationLink>
+          </PaginationItem>
+        );
+      }
+    });
+  };
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
@@ -111,7 +133,12 @@ export default function Index({ products, categories, packages, orderUnits }: Pr
       <div className="flex flex-col lg:flex-row gap-8 px-4 sm:px-6 lg:px-8 py-6">
         {/* Sidebar Filters */}
         <div className="lg:w-1/4 w-full">
-          <Filters onFilterChange={setFilters} categories={categories} packages={packages} orderUnits={orderUnits} />
+          <Filters 
+            onFilterChange={handleFilterChange} 
+            categories={categories} 
+            packages={packages} 
+            orderUnits={orderUnits} 
+          />
         </div>
 
         {/* Product Section */}
@@ -123,11 +150,15 @@ export default function Index({ products, categories, packages, orderUnits }: Pr
               type="text"
               placeholder="Search Products..."
               className="w-full sm:w-1/2 border px-3 py-2 rounded-md"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              defaultValue={filters.search || ""}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleFilterChange({ ...filters, search: (e.target as HTMLInputElement).value });
+                }
+              }}
             />
 
-            <Select value={sortBy} onValueChange={setSortBy}>
+            <Select value={filters.sort || "name-asc"} onValueChange={handleSortChange}>
               <SelectTrigger className="w-[200px]">
                 <SelectValue placeholder="Sort Products" />
               </SelectTrigger>
@@ -141,23 +172,30 @@ export default function Index({ products, categories, packages, orderUnits }: Pr
           </div>
 
           {/* Produk */}
-          {filteredProducts.length === 0 ? (
+          {products.data.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 text-gray-500">
               <ShoppingCart size={64} className="mb-4 text-gray-400" />
               <p className="text-lg font-medium">Produk yang anda cari tidak ditemukan</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {filteredProducts.map((p, i) => (
-                <div
-                  key={i}
-                  onClick={() => setSelectedProduct(p)}
-                  className="cursor-pointer"
-                >
-                  <ProductCard product={p} addToCart={addToCart} />
-                </div>
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {products.data.map((p, i) => (
+                  <div key={i} className="cursor-pointer">
+                    <ProductCard product={p} addToCart={addToCart} />
+                  </div>
+                ))}
+              </div>
+
+              {/* 🔹 Pagination */}
+              <div className="mt-6">
+                <Pagination>
+                  <PaginationContent>
+                    {renderPaginationItems()}
+                  </PaginationContent>
+                </Pagination>
+              </div>
+            </>
           )}
         </div>
       </div>

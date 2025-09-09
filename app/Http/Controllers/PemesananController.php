@@ -10,24 +10,61 @@ use App\Models\Category;
 
 class PemesananController extends Controller
 {
-    public function index()
-    {
-        // Ambil semua produk dengan kategori (hanya id & main_category biar ringan)
-        $products = Product::with('category:id,main_category')
-            ->get(['id', 'sku', 'name', 'price', 'image', 'category_id', 'order_unit', 'is_active', 'content', 'base_uom', 'weight', 'pharmacology', 'dosage', 'description']);
-        
-        $categories = Category::pluck('main_category')->unique()->values();
-        $packages = Product::pluck('base_uom')->filter()->unique()->values();
-        $orderUnits = Product::pluck('order_unit')->filter()->unique()->values();
-    
-
-        return Inertia::render('Pemesanan/Index', [
-            'products' => $products,
-            'categories' => $categories,
-            'packages' => $packages,
-            'orderUnits' => $orderUnits,
+public function index(Request $request)
+{
+    $query = Product::with('category:id,main_category')
+        ->select([
+            'id', 'sku', 'name', 'price', 'image', 'category_id', 
+            'order_unit', 'is_active', 'content', 'base_uom', 
+            'weight', 'pharmacology', 'dosage', 'description'
         ]);
+
+    // 🔎 Filter kategori
+    if ($request->filled('categories')) {
+        $categories = (array) $request->categories; // pastikan array
+        $query->whereHas('category', function ($q) use ($categories) {
+            $q->whereIn('main_category', $categories);
+        });
     }
+
+    // 🔹 Filter Package (base_uom)
+    if ($request->filled('packages')) {
+        $packages = (array) $request->packages;
+        $query->whereIn('base_uom', $packages);
+    }
+
+    // 🔹 Filter Order Unit
+    if ($request->filled('orderUnits')) {
+        $orderUnits = (array) $request->orderUnits;
+        $query->whereIn('order_unit', $orderUnits);
+    }
+
+    // 🔍 Pencarian
+    if ($request->filled('search')) {
+        $search = $request->search;
+        $query->where(function ($q) use ($search) {
+            $q->where('name', 'like', "%{$search}%")
+              ->orWhere('sku', 'like', "%{$search}%")
+              ->orWhere('content', 'like', "%{$search}%");
+        });
+    }
+
+    // 📄 Pagination (12 produk per halaman, bisa disesuaikan)
+    $products = $query->paginate(12)->withQueryString();
+
+    // 🔧 Data filter tambahan
+    $categories = Category::pluck('main_category')->unique()->values();
+    $packages = Product::pluck('base_uom')->filter()->unique()->values();
+    $orderUnits = Product::pluck('order_unit')->filter()->unique()->values();
+
+    return Inertia::render('Pemesanan/Index', [
+        'products' => $products,
+        'categories' => $categories,
+        'packages' => $packages,
+        'orderUnits' => $orderUnits,
+        'filters' => $request->only(['category', 'package', 'orderUnit', 'search']),
+    ]);
+}
 
     /**
      * IMPROVEMENT:

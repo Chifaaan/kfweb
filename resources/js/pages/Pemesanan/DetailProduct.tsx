@@ -9,9 +9,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { ShoppingCart, Minus, Plus, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
-import { Link } from '@inertiajs/react';
-import { ProductRecommendationCard } from '@/components/ProductRecommendationCard';
-import ProductCard from "@/components/ProductCard";
+import ProductCard from "@/components/ProductCard.jsx";
 
 
 const MotionButton = motion(Button);
