@@ -44,10 +44,20 @@ export default function Index({ products, categories, packages, orderUnits, filt
   const [cart, setCart] = useState<CartItem[]>([]);
   const [animationTrigger, setAnimationTrigger] = useState(0);
   const [query, setQuery] = useState(filters);
+  const [searchTerm, setSearchTerm] = useState(filters.search || "");
 
   useEffect(() => {
     setQuery(filters);
+    setSearchTerm(filters.search || "");
   }, [filters]);
+
+// 🔹 Jalan setiap kali searchTerm berubah
+useEffect(() => {
+  // hanya trigger kalau user benar-benar mengetik (bukan saat awal page load)
+  if (searchTerm !== filters.search) {
+    handleFilterChange({ search: searchTerm || undefined });
+  }
+}, [searchTerm]);
 
   // 🔹 jumlah jenis produk unik
   const totalItems = cart.length;
@@ -80,16 +90,22 @@ export default function Index({ products, categories, packages, orderUnits, filt
     setAnimationTrigger(prev => prev + 1);
   };
 
-  // 🔹 Event handler filter
-  const handleFilterChange = (filterData: { category?: string; package?: string; orderUnit?: string; search?: string }) => {
-    const newQuery = { ...query, ...filterData };
-    setQuery(newQuery);
+// 🔹 Event handler filter
+const handleFilterChange = (filterData: { category?: string; package?: string; orderUnit?: string; search?: string }) => {
+  const newQuery = { ...query, ...filterData };
 
-    router.get("medicines", newQuery, {
-      preserveState: true,
-      preserveScroll: true,
-    });
-  };
+  // kalau search kosong/hilang, hapus dari query
+  if (!newQuery.search) {
+    delete newQuery.search;
+  }
+
+  setQuery(newQuery);
+
+  router.get("medicines", newQuery, {
+    preserveState: true,
+    preserveScroll: true,
+  });
+};
 
   // 🔹 Event handler sorting
   const handleSortChange = (sortValue: string) => {
@@ -155,19 +171,13 @@ export default function Index({ products, categories, packages, orderUnits, filt
 
         {/* Product Section */}
         <div className="flex-1">
-          
-
           <div className="flex flex-col sm:flex-row justify-between gap-2 mb-4">
             <input
               type="text"
               placeholder="Search Products..."
               className="w-full sm:w-1/2 border px-3 py-2 rounded-md"
-              defaultValue={query.search || ""}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  handleFilterChange({ search: (e.target as HTMLInputElement).value });
-                }
-              }}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)} // langsung update state
             />
             <Select value={query.sort || "name-asc"} onValueChange={handleSortChange}>
               <SelectTrigger className="w-[200px]">

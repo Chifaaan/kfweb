@@ -38,6 +38,21 @@ Route::get('/dashboard', function () {
     // update status (POST)
     Route::post('pemesanan/history/{id_transaksi}/status', [HistoryController::class, 'updateStatus'])->name('history.updateStatus');
 
+    // API routes for search
+    Route::get('/api/products/search', function () {
+        $query = request()->input('q');
+        if (!$query) {
+            return response()->json([]);
+        }
+        
+        $products = Product::where('name', 'like', "%{$query}%")
+            ->orWhere('sku', 'like', "%{$query}%")
+            ->limit(10)
+            ->get(['id', 'name', 'sku']);
+            
+        return response()->json($products);
+    });
+
     Route::bind('product', function ($value) {
     return \App\Models\Product::findOrFail($value);
 });

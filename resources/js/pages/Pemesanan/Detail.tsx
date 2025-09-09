@@ -225,7 +225,7 @@ export default function Detail() {
                   >
                     Paket Sudah Diterima
                   </Button>
-                    <Button variant="destructive" className="w-full sm:flex-1"> {/* Flex-1 on desktop, full width on mobile */}
+                    <Button variant="destructive" className="w-full sm:flex-1 text-white"> {/* Flex-1 on desktop, full width on mobile */}
                       Laporkan
                     </Button>
                   </div>

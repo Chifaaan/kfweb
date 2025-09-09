@@ -11,7 +11,7 @@ import { History, Menu, Search, ShoppingCart, Pill } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import AppLogo from './app-logo';
 import AppLogoIcon from './app-logo-icon';
-import Fuse from "fuse.js";
+import axios from 'axios';
 
 const sections = [
     {
@@ -44,34 +44,50 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
 
     // === Search Update ===
     const [searchQuery, setSearchQuery] = useState('');
-const [searchResults, setSearchResults] = useState<{ id: number; name: string }[]>([]);
-const [showResults, setShowResults] = useState(false);
-const searchRef = useRef<HTMLDivElement>(null);
+    const [searchResults, setSearchResults] = useState<{ id: number; name: string; sku: string }[]>([]);
+    const [showResults, setShowResults] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const searchRef = useRef<HTMLDivElement>(null);
+    const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-const products = [
-  { id: 1, name: "Paracetamol", category: "Obat" },
-  { id: 2, name: "Amoxicillin", category: "Antibiotik" },
-  { id: 3, name: "Ibuprofen", category: "Obat nyeri" },
-  { id: 4, name: "Vitamin C", category: "Suplemen" },
-  { id: 5, name: "Tissue Basah", category: "Kebersihan" },
-];
+    // Fetch products from database
+    useEffect(() => {
+        if (searchQuery.trim().length > 1) {
+            // Clear previous timeout
+            if (searchTimeoutRef.current) {
+                clearTimeout(searchTimeoutRef.current);
+            }
 
-useEffect(() => {
-  if (searchQuery.trim().length > 0) {
-    const fuse = new Fuse(products, {
-      keys: ["name", "category"], // bisa cari berdasarkan nama & kategori
-      threshold: 0.4,             // semakin kecil makin ketat, 0.4 cukup longgar
-    });
+            // Set new timeout to debounce API calls
+            searchTimeoutRef.current = setTimeout(async () => {
+                setIsLoading(true);
+                try {
+                    const response = await axios.get('/api/products/search', {
+                        params: { q: searchQuery }
+                    });
+                    setSearchResults(response.data);
+                    setShowResults(true);
+                } catch (error) {
+                    console.error('Error fetching search results:', error);
+                    setSearchResults([]);
+                    setShowResults(true);
+                } finally {
+                    setIsLoading(false);
+                }
+            }, 300); // 300ms debounce
+        } else {
+            setSearchResults([]);
+            setShowResults(false);
+            setIsLoading(false);
+        }
 
-    const results = fuse.search(searchQuery).map(res => res.item);
-
-    setSearchResults(results);
-    setShowResults(true);
-  } else {
-    setSearchResults([]);
-    setShowResults(false);
-  }
-}, [searchQuery]);
+        // Cleanup timeout on unmount or when searchQuery changes
+        return () => {
+            if (searchTimeoutRef.current) {
+                clearTimeout(searchTimeoutRef.current);
+            }
+        };
+    }, [searchQuery]);
 
     // Tutup dropdown kalau klik di luar
     useEffect(() => {
@@ -194,7 +210,7 @@ useEffect(() => {
                     <div className="ml-auto flex items-center space-x-2">
 
                         {/* === Search Update === */}
-                        <div className="relative w-48 md:w-72" ref={searchRef}>
+                        <div className="relative w-48 md:w-72 hidden lg:block" ref={searchRef}>
                             <div className="flex items-center rounded-md border border-neutral-300 bg-white px-2 dark:bg-neutral-800 dark:border-neutral-700">
                                 <Search className="mr-2 h-4 w-4 text-neutral-400" />
                                 <input
@@ -207,22 +223,30 @@ useEffect(() => {
                             </div>
 
                             {showResults && (
-                                <div className="absolute top-11 left-0 w-full rounded-md border bg-white shadow-md dark:bg-neutral-900 dark:border-neutral-700 z-50">
-                                    {searchResults.length > 0 ? (
+                                <div className="absolute top-11 left-0 w-full rounded-md border bg-white shadow-md dark:bg-neutral-900 dark:border-neutral-700 z-50 max-h-60 overflow-y-auto">
+                                    {isLoading ? (
+                                        <p className="px-4 py-2 text-sm text-neutral-500 dark:text-neutral-400">
+                                            Memuat...
+                                        </p>
+                                    ) : searchResults.length > 0 ? (
                                         searchResults.map((product) => (
                                             <Link
                                                 key={product.id}
-                                                href={`/produk/${product.id}`}
+                                                href={`/pemesanan/medicines/${product.id}`}
                                                 className="block px-4 py-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                                                onClick={() => setShowResults(false)}
                                             >
-                                                {product.name}
+                                                <div className="font-medium">{product.name}</div>
+                                                <div className="text-xs text-neutral-500 dark:text-neutral-400">
+                                                    {product.sku}
+                                                </div>
                                             </Link>
                                         ))
-                                    ) : (
+                                    ) : searchQuery.trim().length > 1 ? (
                                         <p className="px-4 py-2 text-sm text-neutral-500 dark:text-neutral-400">
                                             Produk tidak ditemukan
                                         </p>
-                                    )}
+                                    ) : null}
                                 </div>
                             )}
                         </div>
