@@ -90,18 +90,10 @@ public function index(Request $request)
     ]);
 }
 
-    /**
-     * IMPROVEMENT:
-     * Simplified the query in the `show` method.
-     * By removing the second argument from `findOrFail($id)`, we fetch all columns
-     * for the product. This is better for a detail page as it ensures all product
-     * data is available to the frontend and is easier to maintain.
-     */
     public function show(Product $product)
     {
-        // Eager load the category relationship and fetch the full product model.
-        // $product = Product::with('category:id,main_category')->findOrFail($id);
-        // dd($product->id);
+
+        $product->load('category:id,main_category');
         
         // Fetch related products from the same category (limit to 4)
         $relatedProducts = Product::with('category:id,main_category')

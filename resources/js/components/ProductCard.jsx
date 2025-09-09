@@ -90,7 +90,7 @@ export default function ProductCard({ product, addToCart, showDetailButton = fal
 
         {/* Bagian Bawah */}
         <div className="mt-2">
-          <p className="text-sm font-bold text-blue-600">
+          <p className="text-md font-bold text-blue-600">
             Rp {price?.toLocaleString('id-ID') ?? "0"}
           </p>
         </div>
