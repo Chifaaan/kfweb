@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
             CategorySeeder::class,
             OrderSeeder::class,
             OrderProductSeeder::class,
+            ApotekSeeder::class,
         ]);
     }
 }

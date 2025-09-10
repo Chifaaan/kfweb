@@ -14,6 +14,7 @@ class ApotekSeeder extends Seeder
     {
         DB::table('apoteks')->insert([
             [
+                'id'        => 'KOP-00123',
                 'branch'    => 'Jakarta Pusat',
                 'sap_id'    => 'SAP001',
                 'name'      => 'Apotek Sehat Jakarta',
@@ -27,6 +28,7 @@ class ApotekSeeder extends Seeder
                 'updated_at'=> now(),
             ],
             [
+                'id'        => 'KOP-00124',
                 'branch'    => 'Bandung',
                 'sap_id'    => 'SAP002',
                 'name'      => 'Apotek Sehat Bandung',
@@ -40,6 +42,7 @@ class ApotekSeeder extends Seeder
                 'updated_at'=> now(),
             ],
             [
+                'id'        => 'KOP-00125',
                 'branch'    => 'Surabaya',
                 'sap_id'    => 'SAP003',
                 'name'      => 'Apotek Sehat Surabaya',

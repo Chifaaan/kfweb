@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class PurchaseOrderController extends Controller
 {
@@ -53,11 +54,23 @@ public function store(Request $request)
         }
 
         DB::commit();
-        return redirect()->route('history')->with('success', 'Purchase Order berhasil disimpan!');
+        return redirect()->route('po.success', ['id_transaksi' => $order->id_transaksi]);
     } catch (\Exception $e) {
         DB::rollBack();
         return back()->withErrors(['error' => $e->getMessage()]);
     }
+}
+
+public function success($id_transaksi)
+{
+    $order = Order::with(['products' => function ($q) {
+        $q->select('products.id', 'sku', 'name', 'price', 'image')
+          ->withPivot('quantity');
+    }])->where('id_transaksi', $id_transaksi)->firstOrFail();
+
+    return Inertia::render('Pemesanan/Success', [
+        'order' => $order,
+    ]);
 }
 
 }

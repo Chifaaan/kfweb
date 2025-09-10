@@ -137,7 +137,7 @@ export default function DetailProduct({ product, relatedProducts }: { product: P
                   <AccordionItem value="description">
                     <AccordionTrigger>Deskripsi</AccordionTrigger>
                     <AccordionContent>
-                      <p className="text-sm text-muted-foreground leading-relaxed">
+                      <p className="text-sm leading-relaxed">
                         {product.description || 'Tidak ada deskripsi untuk produk ini.'}
                       </p>
                     </AccordionContent>
@@ -154,7 +154,7 @@ export default function DetailProduct({ product, relatedProducts }: { product: P
                         }
                         if (pharmacologyData.length > 0) {
                           return (
-                            <ul className="list-disc pl-5 space-y-1 text-sm text-muted-foreground">
+                            <ul className="list-disc pl-5 space-y-1 text-sm ">
                               {pharmacologyData.map((item, index) => (
                                 <li key={index}>{item}</li>
                               ))}
@@ -162,7 +162,7 @@ export default function DetailProduct({ product, relatedProducts }: { product: P
                           );
                         }
                         return (
-                          <p className="text-sm text-muted-foreground">
+                          <p className="text-sm ">
                             {typeof product.pharmacology === "string"
                               ? product.pharmacology
                               : "Tidak ada informasi farmakologi untuk produk ini."}
@@ -184,7 +184,7 @@ export default function DetailProduct({ product, relatedProducts }: { product: P
                         const dosageEntries = Object.entries(dosageData);
                         if (dosageEntries.length > 0) {
                           return (
-                            <ul className="list-disc pl-5 space-y-1 text-sm text-muted-foreground">
+                            <ul className="list-disc pl-5 space-y-1 text-sm ">
                               {dosageEntries.map(([key, value], index) => (
                                 <li key={index}>
                                   <strong>{key}:</strong> {value}
@@ -194,7 +194,7 @@ export default function DetailProduct({ product, relatedProducts }: { product: P
                           );
                         }
                         return (
-                          <p className="text-sm text-muted-foreground">
+                          <p className="text-sm ">
                             {typeof product.dosage === "string" && product.dosage.length > 0
                               ? product.dosage
                               : "Tidak ada informasi aturan pakai & dosis untuk produk ini."}
@@ -209,32 +209,32 @@ export default function DetailProduct({ product, relatedProducts }: { product: P
                     <AccordionTrigger>Informasi Kemasan</AccordionTrigger>
                     <AccordionContent>
                       <div className="space-y-2 text-sm">
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Brand Obat:</span>
+                        <div className="flex justify-between text-muted-foreground">
+                          <span className="">Brand Obat:</span>
                           <span className="font-semibold text-foreground">{product.brand || '-'}</span>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Jenis Kemasan:</span>
+                        <div className="flex justify-between text-muted-foreground">
+                          <span className="">Jenis Kemasan:</span>
                           <span className="font-semibold text-foreground">{product.base_uom || '-'}</span>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Jumlah dalam Kemasan:</span>
+                        <div className="flex justify-between text-muted-foreground">
+                          <span className="">Jumlah dalam Kemasan:</span>
                           <span className="font-semibold text-foreground">
                             {product.content ? `${product.content} ${product.base_uom}` : '-'}
                           </span>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Packing Kemasan:</span>
+                        <div className="flex justify-between text-muted-foreground">
+                          <span className="">Packing Kemasan:</span>
                           <span className="font-semibold text-foreground">{product.order_unit || '-'}</span>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Berat Kemasan:</span>
+                        <div className="flex justify-between text-muted-foreground">
+                          <span className="">Berat Kemasan:</span>
                           <span className="font-semibold text-foreground">
                             {product.weight ? `${product.weight} gram` : '-'}
                           </span>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Dimensi Kemasan:</span>
+                        <div className="flex justify-between text-muted-foreground">
+                          <span className="">Dimensi Kemasan:</span>
                           <span className="font-semibold text-foreground">
                             {product.length && product.width && product.height
                               ? `${product.length} x ${product.width} x ${product.height} cm`

@@ -12,7 +12,7 @@ return new class extends Migration
 public function up(): void
     {
         Schema::create('apoteks', function (Blueprint $table) {
-            $table->id();
+            $table->string('id')->primary();
             $table->string('branch');
             $table->string('sap_id');
             $table->string('name');

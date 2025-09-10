@@ -29,6 +29,7 @@ Route::get('/dashboard', function () {
     Route::get('pemesanan/cart', [PemesananController::class , 'cart'])->name('cart');
     Route::get('pemesanan/po', [PemesananController::class , 'po'])->name('po');
     Route::post('pemesanan/po', [PurchaseOrderController::class, 'store'])->name('po.store');
+    Route::get('pemesanan/success/{id_transaksi}', [PurchaseOrderController::class, 'success'])->name('po.success');
     Route::get('penerimaan', [PenerimaanController::class , 'index'])->name('penerimaan');
 
     // History

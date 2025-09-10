@@ -17,7 +17,6 @@ import { Card } from "@/components/ui/card";
 
 // --- Step 1: Update the FilterCard Component for new design and colors ---
 const FilterCard = ({ icon: Icon, label, isSelected, onClick, color = "gray" }) => {
-  // Define color themes using Tailwind CSS classes
   const colorStyles = {
     red: {
       base: "border-red-500/30 text-red-800 bg-red-50 hover:bg-red-100",
@@ -146,7 +145,7 @@ export default function Filters({
       {/* Category - Refactored with full-width cards and colors */}
       <div className="mb-6">
         <h3 className="font-semibold mb-3">Categories</h3>
-        <div className="flex flex-col gap-2"> {/* Changed to flex-col */}
+        <div className="flex flex-col gap-2"> 
           {propCategories.map((cat) => {
             const config = categoryConfig[cat] || categoryConfig.default;
             return (
@@ -166,7 +165,7 @@ export default function Filters({
       {/* Packaging - Refactored with full-width cards */}
       <div className="mb-6">
         <h3 className="font-semibold mb-3">Packaging</h3>
-        <div className="flex flex-col gap-2"> {/* Changed to flex-col */}
+        <div className="flex flex-col gap-2"> 
           {propPackages.map((pack) => (
             <FilterCard
               key={pack}
@@ -174,39 +173,8 @@ export default function Filters({
               icon={packageIcons[pack] || packageIcons.default}
               isSelected={selectedPackages.includes(pack)}
               onClick={() => togglePackage(pack)}
-              // No color prop passed, so it will use the "gray" default
             />
           ))}
-        </div>
-      </div>
-
-      {/* Order Units - Kept as checkboxes */}
-      <div className="mb-6">
-        <h3 className="font-semibold mb-2">Order Units</h3>
-        <ul className="space-y-1">
-          {propOrderUnits.map((unit) => (
-            <li key={unit}>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={selectedOrderUnits.includes(unit)}
-                  onChange={() => toggleOrderUnit(unit)}
-                  className="rounded border-gray-300 text-primary focus:ring-primary"
-                />
-                {unit}
-              </label>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      {/* Harga - Unchanged */}
-      <div>
-        <h3 className="font-semibold mb-2">Range Harga</h3>
-        <input type="range" min="0" max="1000000" className="w-full" />
-        <div className="flex justify-between text-sm text-muted-foreground">
-          <span>0</span>
-          <span>1.000.000</span>
         </div>
       </div>
     </div>

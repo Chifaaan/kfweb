@@ -48,6 +48,21 @@ export type BuyerAddress = {
   phone?: string;
 };
 
+export interface Apotek {
+  id: string;
+  branch: string;
+  sap_id: string;
+  name: string;
+  address: string;
+  phone: string;
+  latitude: number;
+  longitude: number;
+  zipcode: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface SharedData {
   name: string;
   quote: { message: string; author: string };
@@ -121,6 +136,7 @@ export interface Order {
     quantity: number;
   }[]; //Relasi ke Product
   created_at: string;
+  apotek?: Apotek;
 }
 
 export interface OrderPayload {

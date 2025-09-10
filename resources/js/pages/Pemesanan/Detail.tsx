@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
 import { ArrowRight, Package, Truck, CheckCircle, ArrowLeft } from 'lucide-react';
-import type { BreadcrumbItem, ProductPivot, Order, BuyerAddress } from '@/types';
+import type { BreadcrumbItem, ProductPivot, Order, Apotek } from '@/types';
 
 const breadcrumbs: BreadcrumbItem[] = [
   { title: "Dashboard", href: "/dashboard" },
@@ -16,9 +16,9 @@ const breadcrumbs: BreadcrumbItem[] = [
 type TimelineItem = { key: string; label: string; time: string | null };
 
 export default function Detail() {
-  const { props } = usePage<{ order: Order; timeline: TimelineItem[], buyer:BuyerAddress; }>();
+  const { props } = usePage<{ order: Order; timeline: TimelineItem[], apotek: Apotek }>();
   const order = props.order;
-  const buyer = props.buyer;
+  const apotek = props.apotek;
   const timeline = props.timeline;
   const ppn = order.subTotal * 0.11;
 
@@ -96,30 +96,25 @@ export default function Detail() {
               </div>
             </Card>
 
-            {/* Shipping Address + Payment Info */}
+            {/* Apotek Information + Payment Info */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Shipping Address (Buyer)</CardTitle>
+                  <CardTitle>Apotek Information</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {buyer ? (
+                  {apotek ? (
                     <div>
-                      <div className="font-medium">{buyer.recipient_name || '—'}</div>
-                      <div className="text-sm">{buyer.address_line1}</div>
-                      {buyer.address_line2 && (
-                        <div className="text-sm">{buyer.address_line2}</div>
-                      )}
+                      <div className="font-medium">{apotek.name || '—'}</div>
+                      <div className="text-sm">{apotek.address || '—'}</div>
                       <div className="text-sm">
-                        {buyer.city}, {buyer.province}{' '}
-                        {buyer.postal_code}
+                        {apotek.branch} - {apotek.sap_id}
                       </div>
-                      <div className="text-sm">{buyer.country}</div>
-                      <div className="text-sm mt-2">Phone: {buyer.phone || '-'}</div>
+                      <div className="text-sm mt-2">Phone: {apotek.phone || '-'}</div>
                     </div>
                   ) : (
                     <div className="text-sm text-muted-foreground">
-                      No buyer address found for id_koperasi: {order.id_koperasi}
+                      No apotek information found for id_koperasi: {order.id_koperasi}
                     </div>
                   )}
                 </CardContent>

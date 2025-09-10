@@ -53,6 +53,12 @@ class Order extends Model
         return $this->hasOne(BuyerAddress::class, 'id_koperasi', 'id_koperasi');
     }
 
+    // Apotek information based on id_koperasi (many-to-one)
+    public function apotek()
+    {
+        return $this->belongsTo(Apotek::class, 'id_koperasi', 'id');
+    }
+
     // Helper: progress step (1..4)
     public function getProgressStepAttribute()
     {

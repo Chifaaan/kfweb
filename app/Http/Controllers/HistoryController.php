@@ -30,7 +30,8 @@ class HistoryController extends Controller
                 $q->select('products.id', 'sku', 'name', 'price', 'image')
                   ->withPivot('quantity');
             },
-            'buyerAddress'
+            'buyerAddress',
+            'apotek'
         ])->where('id_transaksi', $id_transaksi)->firstOrFail();
 
         // timeline array (urutan)
@@ -43,6 +44,8 @@ class HistoryController extends Controller
         return Inertia::render('Pemesanan/Detail', [
             'order'   => $order,
             'timeline'=> $timeline,
+            'buyer' => $order->buyerAddress,
+            'apotek' => $order->apotek, // Add apotek data to props
         ]);
     }
 public function updateStatus(Request $request, $id_transaksi)
