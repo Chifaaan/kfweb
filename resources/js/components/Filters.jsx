@@ -1,7 +1,89 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { router } from "@inertiajs/react";
+import {
+  Pill,
+  Tablets,
+  SmilePlus,
+  Milk,
+  Columns3,
+  HelpCircle,
+  Package, // Fallback icon
+} from "lucide-react";
 
+// You should have this utility function from your ShadCN setup
+import { cn } from "@/lib/utils";
+import { Card } from "@/components/ui/card";
+
+// --- Step 1: Update the FilterCard Component for new design and colors ---
+const FilterCard = ({ icon: Icon, label, isSelected, onClick, color = "gray" }) => {
+  // Define color themes using Tailwind CSS classes
+  const colorStyles = {
+    red: {
+      base: "border-red-500/30 text-red-800 bg-red-50 hover:bg-red-100",
+      selected: "bg-red-100 border-red-500 ring-2 ring-red-500/50",
+      icon: "text-red-500",
+    },
+    yellow: {
+      base: "border-yellow-500/30 text-yellow-800 bg-yellow-50 hover:bg-yellow-100",
+      selected: "bg-yellow-100 border-yellow-500 ring-2 ring-yellow-500/50",
+      icon: "text-yellow-500",
+    },
+    green: {
+      base: "border-green-500/30 text-green-800 bg-green-50 hover:bg-green-100",
+      selected: "bg-green-100 border-green-500 ring-2 ring-green-500/50",
+      icon: "text-green-500",
+    },
+    gray: {
+      base: "border-border text-card-foreground",
+      selected: "bg-primary/10 border-primary ring-2 ring-primary/50",
+      icon: "text-primary",
+    },
+  };
+
+  const styles = colorStyles[color] || colorStyles.gray;
+
+  return (
+    <Card
+      onClick={onClick}
+      className={cn(
+        "flex items-center w-full p-2 gap-4 cursor-pointer transition-all duration-200",
+        "hover:bg-accent",
+        styles.base,
+        isSelected && styles.selected
+      )}
+    >
+      <Icon className={cn("h-6 w-6 flex-shrink-0", styles.icon)} />
+      <span className="text-sm font-semibold">{label}</span>
+    </Card>
+  );
+};
+
+FilterCard.propTypes = {
+  icon: PropTypes.elementType.isRequired,
+  label: PropTypes.string.isRequired,
+  isSelected: PropTypes.bool.isRequired,
+  onClick: PropTypes.func.isRequired,
+  color: PropTypes.oneOf(["red", "yellow", "green", "gray"]),
+};
+
+// --- Step 2: Create detailed Icon and Color Mappings ---
+const categoryConfig = {
+  "Obat": { icon: Pill, color: "red" },
+  "Vitamin & Suplemen": { icon: Tablets, color: "yellow" },
+  "Perawatan Tubuh": { icon: SmilePlus, color: "green" },
+  default: { icon: HelpCircle, color: "gray" },
+};
+
+const packageIcons = {
+  "PCS": Pill,
+  "Tablet": Tablets,
+  "BOTOL": Milk,
+  "STRIP": Columns3,
+  default: Package,
+};
+
+// --- Step 3: Update the Main Filters Component ---
 export default function Filters({
   onFilterChange,
   categories: propCategories,
@@ -9,64 +91,45 @@ export default function Filters({
   orderUnits: propOrderUnits,
 }) {
   const urlParams = new URLSearchParams(window.location.search);
-
-  const initialCategories = urlParams.getAll("categories");
-  const initialPackages = urlParams.getAll("packages");
-  const initialOrderUnits = urlParams.getAll("orderUnits");
+  const initialCategories = urlParams.getAll("categories[]");
+  const initialPackages = urlParams.getAll("packages[]");
+  const initialOrderUnits = urlParams.getAll("orderUnits[]");
 
   const [selectedCategories, setSelectedCategories] = useState(initialCategories);
   const [selectedPackages, setSelectedPackages] = useState(initialPackages);
   const [selectedOrderUnits, setSelectedOrderUnits] = useState(initialOrderUnits);
 
-  // toggle category
   const toggleCategory = (cat) => {
-    if (selectedCategories.includes(cat)) {
-      setSelectedCategories(selectedCategories.filter((c) => c !== cat));
-    } else {
-      setSelectedCategories([...selectedCategories, cat]);
-    }
+    setSelectedCategories((prev) =>
+      prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]
+    );
   };
 
-  // toggle package
   const togglePackage = (pack) => {
-    if (selectedPackages.includes(pack)) {
-      setSelectedPackages(selectedPackages.filter((p) => p !== pack));
-    } else {
-      setSelectedPackages([...selectedPackages, pack]);
-    }
+    setSelectedPackages((prev) =>
+      prev.includes(pack) ? prev.filter((p) => p !== pack) : [...prev, pack]
+    );
   };
 
-  // toggle orderUnit
   const toggleOrderUnit = (unit) => {
-    if (selectedOrderUnits.includes(unit)) {
-      setSelectedOrderUnits(selectedOrderUnits.filter((u) => u !== unit));
-    } else {
-      setSelectedOrderUnits([...selectedOrderUnits, unit]);
-    }
+    setSelectedOrderUnits((prev) =>
+      prev.includes(unit) ? prev.filter((u) => u !== unit) : [...prev, unit]
+    );
   };
 
-  // clear all filters
   const clearAllFilters = () => {
     setSelectedCategories([]);
     setSelectedPackages([]);
     setSelectedOrderUnits([]);
   };
 
-  // kirim ke parent setiap kali filter berubah
-useEffect(() => {
-  router.get(
-    route("medicines"), 
-    {
+  useEffect(() => {
+    onFilterChange({
       categories: selectedCategories,
       packages: selectedPackages,
       orderUnits: selectedOrderUnits,
-    },
-    {
-      preserveState: true,
-      replace: true,
-    }
-  );
-}, [selectedCategories, selectedPackages, selectedOrderUnits]);
+    });
+  }, [selectedCategories, selectedPackages, selectedOrderUnits]);
 
   return (
     <div className="lg:w-64 w-full p-4 border rounded-lg shadow-sm bg-card text-card-foreground">
@@ -80,55 +143,55 @@ useEffect(() => {
         </button>
       </div>
 
-      {/* Category */}
-      <div className="mb-4">
-        <h3 className="font-semibold mb-2">Categories</h3>
-        <ul className="space-y-1">
-          {propCategories.map((cat) => (
-            <li key={cat}>
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={selectedCategories.includes(cat)}
-                  onChange={() => toggleCategory(cat)}
-                />
-                {cat}
-              </label>
-            </li>
-          ))}
-        </ul>
+      {/* Category - Refactored with full-width cards and colors */}
+      <div className="mb-6">
+        <h3 className="font-semibold mb-3">Categories</h3>
+        <div className="flex flex-col gap-2"> {/* Changed to flex-col */}
+          {propCategories.map((cat) => {
+            const config = categoryConfig[cat] || categoryConfig.default;
+            return (
+              <FilterCard
+                key={cat}
+                label={cat}
+                icon={config.icon}
+                color={config.color}
+                isSelected={selectedCategories.includes(cat)}
+                onClick={() => toggleCategory(cat)}
+              />
+            );
+          })}
+        </div>
       </div>
 
-      {/* Packaging */}
-      <div className="mb-4">
-        <h3 className="font-semibold mb-2">Packaging</h3>
-        <ul className="space-y-1">
+      {/* Packaging - Refactored with full-width cards */}
+      <div className="mb-6">
+        <h3 className="font-semibold mb-3">Packaging</h3>
+        <div className="flex flex-col gap-2"> {/* Changed to flex-col */}
           {propPackages.map((pack) => (
-            <li key={pack}>
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={selectedPackages.includes(pack)}
-                  onChange={() => togglePackage(pack)}
-                />
-                {pack}
-              </label>
-            </li>
+            <FilterCard
+              key={pack}
+              label={pack}
+              icon={packageIcons[pack] || packageIcons.default}
+              isSelected={selectedPackages.includes(pack)}
+              onClick={() => togglePackage(pack)}
+              // No color prop passed, so it will use the "gray" default
+            />
           ))}
-        </ul>
+        </div>
       </div>
 
-      {/* Order Units */}
-      <div className="mb-4">
+      {/* Order Units - Kept as checkboxes */}
+      <div className="mb-6">
         <h3 className="font-semibold mb-2">Order Units</h3>
         <ul className="space-y-1">
           {propOrderUnits.map((unit) => (
             <li key={unit}>
-              <label className="flex items-center gap-2">
+              <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={selectedOrderUnits.includes(unit)}
                   onChange={() => toggleOrderUnit(unit)}
+                  className="rounded border-gray-300 text-primary focus:ring-primary"
                 />
                 {unit}
               </label>
@@ -137,7 +200,7 @@ useEffect(() => {
         </ul>
       </div>
 
-      {/* Harga */}
+      {/* Harga - Unchanged */}
       <div>
         <h3 className="font-semibold mb-2">Range Harga</h3>
         <input type="range" min="0" max="1000000" className="w-full" />

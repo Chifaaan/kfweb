@@ -92,7 +92,7 @@ export default function DetailProduct({ product, relatedProducts }: { product: P
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
           {/* Grid 3 kolom */}
-          <div className="grid lg:grid-cols-12 gap-8 lg:gap-14">
+          <div className="grid p-6 lg:p-0 grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6 lg:gap-14">
             
           {/* Kolom 1: Gambar Produk dengan Lens */}
           <div className="lg:col-span-4">
@@ -333,7 +333,7 @@ export default function DetailProduct({ product, relatedProducts }: { product: P
 
 {/* Product Recommendations */}
 {relatedProducts && relatedProducts.length > 0 && (
-  <div className="mb-8">
+  <div className="mb-8 p-6 lg:p-0">
     <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
       <h2 className="text-2xl font-bold mb-6">Rekomendasi Produk</h2>
       

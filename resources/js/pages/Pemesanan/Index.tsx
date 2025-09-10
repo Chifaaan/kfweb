@@ -91,7 +91,7 @@ useEffect(() => {
   };
 
 // 🔹 Event handler filter
-const handleFilterChange = (filterData: { category?: string; package?: string; orderUnit?: string; search?: string }) => {
+const handleFilterChange = (filterData: Partial<typeof query>) => {
   const newQuery = { ...query, ...filterData };
 
   // kalau search kosong/hilang, hapus dari query
@@ -160,7 +160,7 @@ const handleFilterChange = (filterData: { category?: string; package?: string; o
       <h1 className="text-2xl font-bold pt-6 ml-6 lg:ml-9  text-blue-800">Medicine Catalog</h1>
       <div className="flex flex-col lg:flex-row gap-8 px-4 sm:px-6 lg:px-8 py-3">
         {/* Sidebar Filters */}
-        <div className="lg:w-1/4 w-full">
+        <div className="lg:w-1/5 w-full lg:mr-4">
           <Filters 
             onFilterChange={handleFilterChange} 
             categories={categories} 

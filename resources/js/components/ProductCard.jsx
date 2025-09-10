@@ -54,8 +54,9 @@ export default function ProductCard({ product, addToCart, showDetailButton = fal
       >
         
         {/* Floating Category Badge */}
+        <div className="relative w-full mb-2 overflow-hidden rounded-md">
         {category?.main_category && (
-          <span className="absolute top-1 right-1 text-xs px-1 py-0.5 rounded-full bg-blue-100 text-blue-800 whitespace-nowrap shadow">
+          <span className="absolute top-1 z-10 right-1 text-xs px-1 py-0.5 rounded-full bg-blue-100 text-blue-800 whitespace-nowrap shadow">
             {category.main_category}
           </span>
         )}
@@ -65,35 +66,32 @@ export default function ProductCard({ product, addToCart, showDetailButton = fal
           <motion.img
             src={image}
             alt={name}
-            className="w-full h-24 object-cover rounded-md mb-2"
+            className="w-full h-46 object-cover rounded-md mb-6"
             variants={imageVariants}
             whileHover="hover"
           />
+          </div>
 
-          <h3 className="font-semibold leading-tight text-xs mb-1">
-            {name.length > 16 ? name.slice(0, 16) + "..." : name}
+          <h3 className="font-semibold leading-tight text-sm mb-1">
+            {name.length > 25 ? name.slice(0, 16) + "..." : name}
           </h3>
 
+          <div className="flex items-center justify-between gap-1">
           <span className="text-xs text-muted-foreground block">
             {content} {base_uom} per {order_unit}
           </span>
-
-          <p className="text-xs text-gray-500 mt-1">
-            Status:{" "}
-            {is_active ? (
-              <span className="font-semibold text-blue-600">Tersedia</span>
-            ) : (
-              <span className="font-semibold text-red-600">HABIS</span>
-            )}
-          </p>
-        </div>
-
-        {/* Bagian Bawah */}
-        <div className="mt-2">
-          <p className="text-md font-bold text-blue-600">
+          <div>
+          <p className="text-md font-bold text-blue-600 pr-2">
             Rp {price?.toLocaleString('id-ID') ?? "0"}
           </p>
         </div>
+
+
+
+        </div>
+      </div>
+
+
       </motion.div>
     );
   }
@@ -112,7 +110,7 @@ export default function ProductCard({ product, addToCart, showDetailButton = fal
       
       {/* Floating Category Badge */}
       {category?.main_category && (
-        <span className="absolute top-2 right-2 text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-800 whitespace-nowrap shadow">
+        <span className="absolute top-2 right-2 z-10 text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-800 whitespace-nowrap shadow">
           {category.main_category}
         </span>
       )}
