@@ -87,48 +87,37 @@ export default function Filters({
   onFilterChange,
   categories: propCategories,
   packages: propPackages,
-  orderUnits: propOrderUnits,
 }) {
   const urlParams = new URLSearchParams(window.location.search);
   const initialCategories = urlParams.getAll("categories[]");
   const initialPackages = urlParams.getAll("packages[]");
-  const initialOrderUnits = urlParams.getAll("orderUnits[]");
 
   const [selectedCategories, setSelectedCategories] = useState(initialCategories);
   const [selectedPackages, setSelectedPackages] = useState(initialPackages);
-  const [selectedOrderUnits, setSelectedOrderUnits] = useState(initialOrderUnits);
 
   const toggleCategory = (cat) => {
     setSelectedCategories((prev) =>
-      prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]
+      prev.includes(cat) ? [] : [cat]
     );
   };
 
   const togglePackage = (pack) => {
     setSelectedPackages((prev) =>
-      prev.includes(pack) ? prev.filter((p) => p !== pack) : [...prev, pack]
-    );
-  };
-
-  const toggleOrderUnit = (unit) => {
-    setSelectedOrderUnits((prev) =>
-      prev.includes(unit) ? prev.filter((u) => u !== unit) : [...prev, unit]
+      prev.includes(pack) ? [] : [pack]
     );
   };
 
   const clearAllFilters = () => {
     setSelectedCategories([]);
     setSelectedPackages([]);
-    setSelectedOrderUnits([]);
   };
 
   useEffect(() => {
     onFilterChange({
       categories: selectedCategories,
       packages: selectedPackages,
-      orderUnits: selectedOrderUnits,
     });
-  }, [selectedCategories, selectedPackages, selectedOrderUnits]);
+  }, [selectedCategories, selectedPackages]);
 
   return (
     <div className="lg:w-64 w-full p-4 border rounded-lg shadow-sm bg-card text-card-foreground">
@@ -185,5 +174,4 @@ Filters.propTypes = {
   onFilterChange: PropTypes.func.isRequired,
   categories: PropTypes.arrayOf(PropTypes.string).isRequired,
   packages: PropTypes.arrayOf(PropTypes.string).isRequired,
-  orderUnits: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
