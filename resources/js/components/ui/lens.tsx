@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface LensProps {
   children: React.ReactNode;
