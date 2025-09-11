@@ -48,11 +48,31 @@ const categoryMap: Record<number, string> = {
   5: "Herbal",
 };
 
-// Kategori cards untuk hero section
-const categoryCards = [
-  { name: "Obat", desc: "Resep & Bebas Terlengkap", icon: Pill, gradient: "from-blue-600 to-blue-800" },
-  { name: "Vitamin & Suplemen", desc: "Suplemen Premium Import", icon: HeartPulse, gradient: "from-emerald-600 to-emerald-800" },
-  { name: "Perawatan Tubuh", desc: "Kesehatan Preventif Terbaik", icon: Syringe, gradient: "from-rose-600 to-rose-800" },
+// Kategori cards
+const categoryCards: {
+  name: string;
+  desc: string;
+  icon: React.ElementType;
+  color: string;
+}[] = [
+  {
+    name: "Obat",
+    desc: "Resep & Bebas Terlengkap",
+    icon: Pill,
+    color: "text-blue-600 bg-blue-100",
+  },
+  {
+    name: "Vitamin & Suplemen",
+    desc: "Suplemen Premium Import",
+    icon: HeartPulse,
+    color: "text-emerald-600 bg-emerald-100",
+  },
+  {
+    name: "Perawatan Tubuh",
+    desc: "Kesehatan Preventif Terbaik",
+    icon: Syringe,
+    color: "text-rose-600 bg-rose-100",
+  },
 ];
 
 export default function Dashboard({ products }: Props) {
@@ -67,45 +87,64 @@ export default function Dashboard({ products }: Props) {
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
-      <Head title="Premium Pharmacy Dashboard" />
+      <Head title="KFA" />
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50">
         <div className="flex flex-col gap-20 p-4 md:p-8 max-w-7xl mx-auto">
 
           {/* Hero Section */}
-          <motion.div initial={{ opacity: 0, y: -40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="relative overflow-hidden rounded-3xl shadow-2xl">
-            <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-white-700 to-indigo-600"></div>
-            <div className="absolute -top-20 -left-20 w-60 h-60 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
-            <div className="absolute -bottom-20 -right-20 w-72 h-72 bg-indigo-500/20 rounded-full blur-3xl animate-pulse"></div>
-            <div className="relative z-10 flex flex-col md:flex-row items-center justify-between px-6 md:px-16 py-12 md:py-20">
-              <motion.div initial={{ opacity: 0, x: -60 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 1, delay: 0.2 }} className="max-w-2xl text-center md:text-left">
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-md rounded-full mb-6 shadow-md">
-                  <Award className="w-4 h-4 text-yellow-400" />
-                  <span className="text-white/90 text-sm font-medium">Kimia Farma Apotek</span>
-                </div>
-                <h1 className="text-4xl md:text-6xl font-extrabold leading-tight mb-6 text-white">
-                  <span className="bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">Premium Health</span><br/>
-                  <span className="text-white">Experience</span>
-                </h1>
-                <p className="text-lg md:text-xl text-white/80 mb-8 leading-relaxed">
-                  Pilihan terbaik untuk kesehatan keluarga Anda
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-                  <Button className="bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-900 hover:from-yellow-500 hover:to-amber-600 font-bold shadow-lg px-8 py-6 rounded-2xl text-lg hover:shadow-yellow-300/50 transition-all">
-                    <ShoppingBag className="w-5 h-5 mr-2" /> Mulai Belanja
-                  </Button>
-                  <a href="https://www.kimiafarmaapotek.co.id/">
-                  <Button variant="outline" className="border-2 border-white/30 text-black hover:bg-white/10 backdrop-blur-sm font-semibold px-8 py-6 rounded-2xl text-lg">
-                    About Us
-                  </Button>
-                  </a>
-                  
-                </div>
-              </motion.div>
-              <motion.div initial={{ opacity: 0, x: 60, scale: 0.8 }} animate={{ opacity: 1, x: 0, scale: 1 }} transition={{ duration: 1, delay: 0.4 }} className="relative mt-12 md:mt-0">
-                <img src="/Logo KFA member of BioFarma 300x300-01.png" alt="Premium Pharmacy" className="relative w-[260px] md:w-[420px] drop-shadow-2xl hover:scale-105 transition-transform duration-500"/>
-              </motion.div>
-            </div>
-          </motion.div>
+         <motion.div
+  initial={{ opacity: 0, y: -40 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.8 }}
+  className="relative rounded-3xl bg-gradient-to-r from-indigo-900 via-blue-800 to-indigo-700 shadow-2xl overflow-hidden"
+>
+  <div className="absolute inset-0 opacity-30 bg-[url('/pattern.svg')] bg-cover bg-center"></div>
+  <div className="relative z-10 flex flex-col md:flex-row items-center justify-between px-8 md:px-16 py-20 gap-12">
+    {/* Text */}
+    <motion.div
+      initial={{ opacity: 0, x: -60 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 1, delay: 0.2 }}
+      className="max-w-2xl text-center md:text-left"
+    >
+      <h1 className="text-5xl md:text-6xl font-extrabold leading-tight mb-6 text-white">
+        Premium <span className="text-yellow-400">Health</span> <br />
+        <span className="text-white">Experience</span>
+      </h1>
+      <p className="text-lg md:text-xl text-white/80 mb-8 leading-relaxed">
+        Pilihan terbaik untuk kesehatan keluarga Anda
+      </p>
+      <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+        <Button className="bg-yellow-400 text-slate-900 hover:bg-yellow-500 font-bold shadow-lg px-8 py-6 rounded-full text-lg">
+          <ShoppingBag className="w-5 h-5 mr-2" /> Mulai Belanja
+        </Button>
+        <a href="https://www.kimiafarmaapotek.co.id/">
+          <Button
+            variant="outline"
+            className="border-2 border-white/40 text-black hover:bg-white/10 backdrop-blur-sm font-semibold px-8 py-6 rounded-full text-lg"
+          >
+            About Us
+          </Button>
+        </a>
+      </div>
+    </motion.div>
+
+    {/* Logo */}
+    <motion.div
+      initial={{ opacity: 0, x: 60, scale: 0.8 }}
+      animate={{ opacity: 1, x: 0, scale: 1 }}
+      transition={{ duration: 1, delay: 0.4 }}
+      className="relative"
+    >
+      <img
+        src="/Logo KFA member of BioFarma 300x300-01.png"
+        alt="Premium Pharmacy"
+        className="w-[280px] md:w-[420px] drop-shadow-2xl"
+      />
+    </motion.div>
+  </div>
+</motion.div>
+
 
           {/* Kategori Cards */}
           <motion.div
@@ -133,22 +172,28 @@ export default function Dashboard({ products }: Props) {
                         categories: cat.name, // ← ini sesuai dengan Filters
                       })}
                     >
-                      <Card className="relative overflow-hidden rounded-3xl border-0 shadow-xl hover:shadow-2xl group transition-all duration-500">
-                        <div className={`absolute inset-0 bg-gradient-to-br ${cat.gradient} opacity-90`}></div>
-                        <CardContent className="relative z-10 flex flex-col items-center justify-center text-center p-8 text-white">
-                          <div className="bg-white/20 backdrop-blur-sm p-4 rounded-2xl mb-4 group-hover:scale-110 transition-transform duration-300">
-                            <cat.icon className="w-8 h-8" />
-                          </div>
-                          <h3 className="font-bold text-lg mb-2">{cat.name}</h3>
-                          <p className="text-sm text-white/80">{cat.desc}</p>
-                        </CardContent>
-                      </Card>
+                       <Card className="group rounded-2xl border bg-white hover:shadow-xl transition-all duration-300">
+                      <CardContent className="flex flex-col items-center justify-center text-center p-6">
+                        <div
+                          className={`${cat.color} p-4 rounded-full mb-4 group-hover:scale-110 transition-transform`}
+                        >
+                          <cat.icon className="w-6 h-6" />
+                        </div>
+                        <h3 className="font-semibold text-lg text-slate-800">
+                          {cat.name}
+                        </h3>
+                        <p className="text-sm text-slate-500">{cat.desc}</p>
+                      </CardContent>
+                    </Card>
+
                     </Link>
                   </motion.div>
                 ))}
               </div>
             </div>
           </motion.div>
+
+          
 
           {/* Carousel Produk */}
           <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.4 }}>
@@ -186,6 +231,42 @@ export default function Dashboard({ products }: Props) {
               <CarouselNext className="right-0 bg-white/90 backdrop-blur-sm border-0 shadow-lg"/>
             </Carousel>
           </motion.div>
+
+          {/* Banner Promo Section */}
+<motion.div
+  initial={{ opacity: 0, y: 40 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.8, delay: 0.4 }}
+  className="relative rounded-3xl overflow-hidden shadow-2xl"
+>
+  <div className="grid md:grid-cols-2 items-center bg-gradient-to-r from-indigo-900 to-blue-700">
+    {/* Text */}
+    <div className="p-10 md:p-16 text-white space-y-6">
+      <h2 className="text-3xl md:text-5xl font-extrabold leading-tight">
+        📢 MAKIN HEMAT BELANJA DI KIMIA FARMA APOTEK! 🎉
+      </h2>
+      <p className="text-lg text-white/80">
+        Gunakan kartu/layanan dari bank pilihanmu & nikmati promo menarik mulai dari Potongan hingga  <span className="font-bold text-yellow-300">Rp75.000 </span>  
+        dan promo spesial lainnya ✨
+      </p>
+      <a href="https://www.instagram.com/p/DOLfje-EqgW/?img_index=2">
+      <Button className="bg-yellow-400 text-slate-900 hover:bg-yellow-500 font-bold px-8 py-6 rounded-full text-lg shadow-lg">
+        Belanja Sekarang
+      </Button>
+      </a>
+    </div>
+
+    {/* Image */}
+    <div className="relative h-64 md:h-full">
+      <img
+        src="/promo kf.jpg"
+        alt="Promo Banner"
+        className="absolute inset-0 w-full h-full object-cover"
+      />
+      <div className="absolute inset-0 bg-black/20"></div>
+    </div>
+  </div>
+</motion.div>
 
           {/* Grid Produk */}
           <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.5 }}>
