@@ -15,6 +15,7 @@ import {
 import { useState } from "react";
 import { Pill, HeartPulse, Syringe, ShoppingBag, Award } from "lucide-react";
 import { Link } from '@inertiajs/react';
+import Footer from "@/components/Footer"
 
 
 
@@ -92,9 +93,12 @@ export default function Dashboard({ products }: Props) {
                   <Button className="bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-900 hover:from-yellow-500 hover:to-amber-600 font-bold shadow-lg px-8 py-6 rounded-2xl text-lg hover:shadow-yellow-300/50 transition-all">
                     <ShoppingBag className="w-5 h-5 mr-2" /> Mulai Belanja
                   </Button>
+                  <a href="https://www.kimiafarmaapotek.co.id/">
                   <Button variant="outline" className="border-2 border-white/30 text-black hover:bg-white/10 backdrop-blur-sm font-semibold px-8 py-6 rounded-2xl text-lg">
-                    Konsultasi Gratis
+                    About Us
                   </Button>
+                  </a>
+                  
                 </div>
               </motion.div>
               <motion.div initial={{ opacity: 0, x: 60, scale: 0.8 }} animate={{ opacity: 1, x: 0, scale: 1 }} transition={{ duration: 1, delay: 0.4 }} className="relative mt-12 md:mt-0">
@@ -232,6 +236,9 @@ export default function Dashboard({ products }: Props) {
 
         </div>
       </div>
+      
+  
+      <Footer />
               
     </AppLayout>
   );
